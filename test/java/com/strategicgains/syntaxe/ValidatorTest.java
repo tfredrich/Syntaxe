@@ -96,14 +96,21 @@ public class ValidatorTest
 	
 	private class Inner
 	{
+		@SuppressWarnings("unused")
 		@Validate(name="validated string", required=true, maxLength=5)
 		private String validatedString;
+		
+		@SuppressWarnings("unused")
 		private String ignoredString;
 		
+		@SuppressWarnings("unused")
 		@Validate(name="validated integer", greaterThan=5, lessThan=10)
 		private int validatedInt;
+		
+		@SuppressWarnings("unused")
 		private int ignoredInt;
 		
+		@SuppressWarnings("unused")
 		@Validate(greaterThan=-1, lessThan=1)
 		private int intField;
 
@@ -112,6 +119,7 @@ public class ValidatorTest
         	this.validatedString = validatedString;
         }
 		
+		@SuppressWarnings("unused")
 		public void setIgnoredString(String ignoredString)
         {
         	this.ignoredString = ignoredString;
@@ -122,6 +130,7 @@ public class ValidatorTest
         	this.validatedInt = validatedInt;
         }
 		
+		@SuppressWarnings("unused")
 		public void setIgnoredInt(int ignoredInt)
         {
         	this.ignoredInt = ignoredInt;
