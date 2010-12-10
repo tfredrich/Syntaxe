@@ -37,5 +37,5 @@ public @interface Validate
 	int maxLength() default -1;
 	int min() default Integer.MIN_VALUE;
 	int max() default Integer.MAX_VALUE;
-	String[] validators() default {};
+//	String[] validators() default {};
 }

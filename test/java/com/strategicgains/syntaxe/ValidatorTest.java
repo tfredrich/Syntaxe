@@ -97,7 +97,7 @@ public class ValidatorTest
 	@SuppressWarnings("unused")
 	private class Inner
 	{
-		@Validate(name="validated string", required=true, maxLength=5, validators={"FORMAT=###-##-####"})
+		@Validate(name="validated string", required=true, maxLength=5)
 		private String validatedString;
 		
 		private String ignoredString;
