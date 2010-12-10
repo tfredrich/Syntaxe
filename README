@@ -1,0 +1,19 @@
+Syntaxe is an annotations-based, functional-style syntactic (and semantic) domain model validation
+framework for Java.
+
+Created to be simple, Syntaxe supports the following:
+1) @Validate (annotation) - which supports required, less-than, greater-than validations on fields.
+2) Functional-style closures that allow users to create additional custom validations,
+   whether syntactic or semantic.
+3) Validatable interface which calls out the validation contract.
+4) AbstractValidatable which is the default implementation of Validatable, which supports the
+   use of @Validate and functional validations.
+5) Validations utility class containing foreign methods to perform your own default validations
+   such as requiredness, less-than, greater-than.
+6) Validator utility class that implements validation on an instance that leverages the 
+   @Validiate annotation.
+
+Change History:
+===================================================================================================
+Release 0.1
+* Initial extract from RestExpress. Base implementation on which to expand.
