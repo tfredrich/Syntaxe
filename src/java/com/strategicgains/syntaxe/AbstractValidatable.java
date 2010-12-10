@@ -32,7 +32,7 @@ implements Validatable
 	@Override
 	public void validate()
 	{
-		List<String> errors = Validator.validate(this);
+		List<String> errors = ValidationEngine.validate(this);
 		validateInto(errors);
 		
 		if (!errors.isEmpty())

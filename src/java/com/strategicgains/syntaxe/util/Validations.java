@@ -45,20 +45,30 @@ public class Validations
 			errors.add(name + " is limited to " + max + " characters.");
 		}
 	}
-
-	public static void lessThan(String name, int actual, int max, List<String> errors)
+	
+	public static void minLength(String name, String value, int min, List<String> errors)
 	{
-		if (actual >= max)
+		if (value == null) return;
+		
+		if (value.length() < min)
 		{
-			errors.add(name + " must be less-than " + max);
+			errors.add(name + " must contain more-than " + min + " characters.");
 		}
 	}
 
-	public static void greaterThan(String name, int actual, int min, List<String> errors)
+	public static void lessThanOrEqual(String name, int actual, int max, List<String> errors)
+	{
+		if (actual >= max)
+		{
+			errors.add(name + " must be less-than or equal-to " + max);
+		}
+	}
+
+	public static void greaterThanOrEqual(String name, int actual, int min, List<String> errors)
 	{
 		if (actual <= min)
 		{
-			errors.add(name + " must be greater-than " + min);
+			errors.add(name + " must be greater-than or equal-to " + min);
 		}
 	}
 }

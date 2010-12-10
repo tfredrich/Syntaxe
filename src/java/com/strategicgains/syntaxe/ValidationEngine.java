@@ -30,9 +30,9 @@ import com.strategicgains.syntaxe.util.Validations;
  * @author toddf
  * @since Oct 7, 2010
  */
-public class Validator
+public class ValidationEngine
 {
-	private Validator()
+	private ValidationEngine()
 	{
 		// Prevents instantiation.
 	}
@@ -53,7 +53,7 @@ public class Validator
 
 		for (Field field : fields)
 		{
-			if (shouldValidated(field))
+			if (shouldValidateField(field))
 			{
 				try
                 {
@@ -72,7 +72,7 @@ public class Validator
 		return (annotation.name().isEmpty() ? field.getName() : annotation.name());
 	}
 
-	private static boolean shouldValidated(Field field)
+	private static boolean shouldValidateField(Field field)
 	{
 		return field.isAnnotationPresent(Validate.class);
 	}
@@ -108,22 +108,16 @@ public class Validator
             	throw new FunctionException(e);
             }
         	
-        	if (annotation.greaterThan() != Integer.MAX_VALUE)
-        	{
-        		int intValue = ((Integer) value).intValue();
-        		Validations.greaterThan(name, intValue, annotation.greaterThan(), errors);
-        	}
-        	
-        	if (annotation.lessThan() != Integer.MIN_VALUE)
-        	{
-        		int intValue = ((Integer) value).intValue();
-        		Validations.lessThan(name, intValue, annotation.lessThan(), errors);
-        	}
-        	
         	if (annotation.required())
         	{
         		String stringValue = (value == null ? null : String.valueOf(value));
             	Validations.require(name, stringValue, errors);
+        	}
+        	
+        	if (annotation.minLength() > 0)
+        	{
+        		String stringValue = (value == null ? null : String.valueOf(value));
+            	Validations.minLength(name, stringValue, annotation.minLength(), errors);
         	}
         	
         	if (annotation.maxLength() > 0)
@@ -131,8 +125,47 @@ public class Validator
         		String stringValue = (value == null ? null : String.valueOf(value));
             	Validations.maxLength(name, stringValue, annotation.maxLength(), errors);
         	}
+        	
+//        	String validator = annotation.validator();
+//        	if (validator != null)
+//        	{
+//        		execValidators(name, value, validator, errors);
+//        	}
+        	
+        	if (annotation.min() != Integer.MIN_VALUE)
+        	{
+        		int intValue = ((Integer) value).intValue();
+        		Validations.greaterThanOrEqual(name, intValue, annotation.min(), errors);
+        	}
+        	
+        	if (annotation.max() != Integer.MAX_VALUE)
+        	{
+        		int intValue = ((Integer) value).intValue();
+        		Validations.lessThanOrEqual(name, intValue, annotation.max(), errors);
+        	}
 
 	        return null;
         }
+
+		/**
+         * @param validatorString
+         */
+//        private void execValidators(String name, Object value, String validatorString, List<String> errors)
+//        {
+//        	String[] validatorNames = validatorString.split("\\+");
+//        	
+//        	for (String validatorName : validatorNames)
+//        	{
+//        		FieldValidator validator = Validator.valueOf(validatorName);
+//        		
+//        		if (validator != null)
+//        		{
+//        			if (!validator.isValid(value))
+//        			{
+//        				errors.add(validator.getMessageFor(name, value));
+//        			}
+//        		}
+//        	}
+//        }
 	}
 }

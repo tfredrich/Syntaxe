@@ -37,7 +37,7 @@ public class ValidatorTest
 	public void shouldFailRequiredValidatedString()
 	{
 		object.setValidatedInt(7);
-		List<String> errors = Validator.validate(object);
+		List<String> errors = ValidationEngine.validate(object);
 		assertEquals(1, errors.size());
 		assertTrue(errors.get(0).contains("required"));
 		assertTrue(errors.get(0).contains("validated string"));
@@ -48,7 +48,7 @@ public class ValidatorTest
 	{
 		object.setValidatedInt(7);
 		object.setValidatedString("todd was here once, at least");
-		List<String> errors = Validator.validate(object);
+		List<String> errors = ValidationEngine.validate(object);
 		assertEquals(1, errors.size());
 		assertTrue(errors.get(0).contains("validated string"));
 		assertTrue(errors.get(0).contains("5 characters"));
@@ -57,9 +57,9 @@ public class ValidatorTest
 	@Test
 	public void shouldFailGreaterThanTest()
 	{
-		List<String> errors = Validator.validate(object);
+		List<String> errors = ValidationEngine.validate(object);
 		assertEquals(2, errors.size());
-		assertTrue(errors.get(1).contains("greater-than 5"));
+		assertTrue(errors.get(1).contains("greater-than or equal-to 5"));
 		assertTrue(errors.get(1).contains("validated integer"));
 	}
 
@@ -68,9 +68,9 @@ public class ValidatorTest
 	{
 		object.setValidatedString("todd");
 		object.setValidatedInt(25);
-		List<String> errors = Validator.validate(object);
+		List<String> errors = ValidationEngine.validate(object);
 		assertEquals(1, errors.size());
-		assertTrue(errors.get(0).contains("less-than 10"));
+		assertTrue(errors.get(0).contains("less-than or equal-to 10"));
 		assertTrue(errors.get(0).contains("validated integer"));
 	}
 	
@@ -80,7 +80,7 @@ public class ValidatorTest
 		object.setIntField(5);
 		object.setValidatedInt(7);
 		object.setValidatedString("todd");
-		List<String> errors = Validator.validate(object);
+		List<String> errors = ValidationEngine.validate(object);
 		assertEquals(1, errors.size());
 		assertTrue(errors.get(0).contains("intField"));
 	}
@@ -90,28 +90,24 @@ public class ValidatorTest
 	{
 		object.setValidatedInt(7);
 		object.setValidatedString("todd");
-		List<String> errors = Validator.validate(object);
+		List<String> errors = ValidationEngine.validate(object);
 		assertTrue(errors.isEmpty());
 	}
 	
+	@SuppressWarnings("unused")
 	private class Inner
 	{
-		@SuppressWarnings("unused")
 		@Validate(name="validated string", required=true, maxLength=5)
 		private String validatedString;
 		
-		@SuppressWarnings("unused")
 		private String ignoredString;
 		
-		@SuppressWarnings("unused")
-		@Validate(name="validated integer", greaterThan=5, lessThan=10)
+		@Validate(name="validated integer", min=5, max=10)
 		private int validatedInt;
 		
-		@SuppressWarnings("unused")
 		private int ignoredInt;
-		
-		@SuppressWarnings("unused")
-		@Validate(greaterThan=-1, lessThan=1)
+
+		@Validate(min=-1, max=1)
 		private int intField;
 
 		public void setValidatedString(String validatedString)
@@ -119,7 +115,6 @@ public class ValidatorTest
         	this.validatedString = validatedString;
         }
 		
-		@SuppressWarnings("unused")
 		public void setIgnoredString(String ignoredString)
         {
         	this.ignoredString = ignoredString;
@@ -130,7 +125,6 @@ public class ValidatorTest
         	this.validatedInt = validatedInt;
         }
 		
-		@SuppressWarnings("unused")
 		public void setIgnoredInt(int ignoredInt)
         {
         	this.ignoredInt = ignoredInt;

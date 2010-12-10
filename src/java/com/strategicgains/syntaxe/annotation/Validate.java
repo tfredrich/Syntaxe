@@ -33,7 +33,9 @@ public @interface Validate
 {
 	String name() default "";
 	boolean required() default false;
+	int minLength() default -1;
 	int maxLength() default -1;
-	int lessThan() default Integer.MIN_VALUE;
-	int greaterThan() default Integer.MAX_VALUE;
+	int min() default Integer.MIN_VALUE;
+	int max() default Integer.MAX_VALUE;
+//	String[] validators() default {};
 }

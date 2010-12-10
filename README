@@ -15,5 +15,9 @@ Created to be simple, Syntaxe supports the following:
 
 Change History:
 ===================================================================================================
+Release 0.2
+* Refactored Validator into ValidationEngine.
+
+===================================================================================================
 Release 0.1
 * Initial extract from RestExpress. Base implementation on which to expand.
