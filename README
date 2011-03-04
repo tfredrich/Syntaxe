@@ -1,0 +1,86 @@
+Syntaxe is an annotations-based, functional-style syntactic (and semantic) domain model validation
+framework for Java.
+
+Created to be simple, Syntaxe supports the following:
+1) @Validate (annotation) - which supports required, less-than, greater-than validations on fields.
+2) Functional-style closures that allow users to create additional custom validations,
+   whether syntactic or semantic.
+3) Validatable interface which calls out the validation contract.
+4) AbstractValidatable which is the default implementation of Validatable, which supports the
+   use of @Validate and functional validations.
+5) Validations utility class containing foreign methods to perform your own default validations
+   such as requiredness, less-than, greater-than.
+6) Validator utility class that implements validation on an instance that leverages the 
+   @Validiate annotation.
+
+
+Sample Usage:
+===================================================================================================
+Option 1, extend AbstractValidatable
+--This provides the capability to override the validateInto(StringBuffer) method to provide custom
+  validations.
+
+public class MyValidatableClass
+extends AbstractValidatable
+{
+	@Validate(name="ID", required=true)
+	private String id;
+	
+	@Validate(name="Name", required=true, minLength=5, maxLenth=25)
+	private String name;
+
+	@Validate(name="Count", min=3, max=21)
+	private int count;
+}
+...
+elsewhere (e.g. before persisting to storage) call the validate() method on the MyValidatableClass
+instance.
+
+
+Option 2, Validatable implementor, no annotations.
+--This option allows complete customization of validations by implementing the validate() method
+  and throwing a ValidationException when validation fails.
+  
+public class MyValidatableClass
+implements Validatable
+{
+	private String id;
+	private String name;
+	private int count;
+	
+	public void validate()
+	{
+		// provide validation throwing new ValidationException(List<String> errors) if validation
+		// fails.
+	}
+}
+
+Option 3, POJO with annotations.
+--This option enables POJO validations without requiring extension or implementation, using
+  annotations and the ValidationEngine to accomplish validation.
+
+public class MyValidatableClass
+{
+	@Validation(name="ID", required=true)
+	private String id;
+	
+	@Validation(name="Name", required=true, maxLenth=25)
+	private String name;
+
+	@Validate(name="Count", min=3, max=21)
+	private int count;
+}
+...
+elsewhere (e.g. before persisting to storage) call the ValidationEngine.validate(object) method
+passing the MyValidatableClass instance.  If the returned List<String> list of error messages is
+not empty, validation failed.  The validation error messages are in the list.
+
+
+Change History:
+===================================================================================================
+Release 0.2
+* Refactored Validator into ValidationEngine.
+
+===================================================================================================
+Release 0.1
+* Initial extract from RestExpress. Base implementation on which to expand.
