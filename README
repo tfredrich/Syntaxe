@@ -13,7 +13,6 @@ Created to be simple, Syntaxe supports the following:
 6) Validator utility class that implements validation on an instance that leverages the 
    @Validiate annotation.
 
-
 Sample Usage:
 ===================================================================================================
 Option 1, extend AbstractValidatable
