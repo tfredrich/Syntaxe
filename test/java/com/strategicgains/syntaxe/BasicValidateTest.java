@@ -22,14 +22,14 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.strategicgains.syntaxe.annotation.Validate;
+import com.strategicgains.syntaxe.validators.basic.BasicValidate;
 
 
 /**
  * @author toddf
  * @since Oct 8, 2010
  */
-public class ValidatorTest
+public class BasicValidateTest
 {
 	private Inner object = new Inner();
 
@@ -97,17 +97,17 @@ public class ValidatorTest
 	@SuppressWarnings("unused")
 	private class Inner
 	{
-		@Validate(name="validated string", required=true, maxLength=5)
+		@BasicValidate(name="validated string", required=true, maxLength=5)
 		private String validatedString;
 		
 		private String ignoredString;
 		
-		@Validate(name="validated integer", min=5, max=10)
+		@BasicValidate(name="validated integer", min=5, max=10)
 		private int validatedInt;
 		
 		private int ignoredInt;
 
-		@Validate(min=-1, max=1)
+		@BasicValidate(min=-1, max=1)
 		private int intField;
 
 		public void setValidatedString(String validatedString)

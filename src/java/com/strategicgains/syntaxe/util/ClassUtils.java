@@ -21,9 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.strategicgains.jbel.exception.FunctionException;
-import com.strategicgains.jbel.function.UnaryFunction;
-
 /**
  * @author toddf
  * @since Aug 18, 2008
@@ -79,18 +76,11 @@ public class ClassUtils
     
     // SECTION: UTILITY - PRIVATE
 
-    private static void getAllDeclaredFields(Class<?> aClass, UnaryFunction function)
+    private static void getAllDeclaredFields(Class<?> aClass, FieldClosure function)
     {
     	for (Field field : aClass.getDeclaredFields())
     	{
-    		try
-            {
-	            function.perform(field);
-            }
-            catch (FunctionException e)
-            {
-	            e.printStackTrace();
-            }
+    		function.perform(field);
     	}
 
     	if (aClass.getSuperclass() != null)
@@ -102,8 +92,13 @@ public class ClassUtils
 
     // SECTION: INNER CLASSES
     
+    private interface FieldClosure
+    {
+    	void perform(Field argument);
+    }
+    
     private static class FieldListClosure
-    implements UnaryFunction
+    implements FieldClosure
     {
     	private List<Field> values;
     	private int ignoredModifiers;
@@ -116,17 +111,13 @@ public class ClassUtils
     	}
 
         @Override
-        public Object perform(Object argument)
-        throws FunctionException
+        public void perform(Field field)
         {
-        	Field field = (Field) argument;
 
         	if ((field.getModifiers() & ignoredModifiers) == 0)
         	{
-        		values.add((Field) argument);
+        		values.add(field);
         	}
-
-	        return null;
         }
         
         public List<Field> getValues()
@@ -136,7 +127,7 @@ public class ClassUtils
     }
     
     private static class FieldHashMapClosure
-    implements UnaryFunction
+    implements FieldClosure
     {
     	private HashMap<String, Field> values;
     	private int ignoredModifiers;
@@ -149,17 +140,12 @@ public class ClassUtils
     	}
 
         @Override
-        public Object perform(Object argument)
-        throws FunctionException
+        public void perform(Field field)
         {
-        	Field field = (Field) argument;
-
         	if ((field.getModifiers() & ignoredModifiers) == 0)
         	{
         		values.put(field.getName(), field);
         	}
-
-	        return null;
         }
         
         public HashMap<String, Field> getValues()

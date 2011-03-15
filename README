@@ -2,7 +2,7 @@ Syntaxe is an annotations-based, functional-style syntactic (and semantic) domai
 framework for Java.
 
 Created to be simple, Syntaxe supports the following:
-1) @Validate (annotation) - which supports required, less-than, greater-than validations on fields.
+1) @BasicValidate (annotation) - which supports required, less-than, greater-than validations on fields.
 2) Functional-style closures that allow users to create additional custom validations,
    whether syntactic or semantic.
 3) Validatable interface which calls out the validation contract.
@@ -11,7 +11,7 @@ Created to be simple, Syntaxe supports the following:
 5) Validations utility class containing foreign methods to perform your own default validations
    such as requiredness, less-than, greater-than.
 6) Validator utility class that implements validation on an instance that leverages the 
-   @Validiate annotation.
+   @BasicValidate annotation.
 
 Sample Usage:
 ===================================================================================================
@@ -22,13 +22,13 @@ Option 1, extend AbstractValidatable
 public class MyValidatableClass
 extends AbstractValidatable
 {
-	@Validate(name="ID", required=true)
+	@BasicValidate(name="ID", required=true)
 	private String id;
 	
-	@Validate(name="Name", required=true, minLength=5, maxLenth=25)
+	@BasicValidate(name="Name", required=true, minLength=5, maxLenth=25)
 	private String name;
 
-	@Validate(name="Count", min=3, max=21)
+	@BasicValidate(name="Count", min=3, max=21)
 	private int count;
 }
 ...
@@ -60,13 +60,13 @@ Option 3, POJO with annotations.
 
 public class MyValidatableClass
 {
-	@Validation(name="ID", required=true)
+	@BasicValidate(name="ID", required=true)
 	private String id;
 	
-	@Validation(name="Name", required=true, maxLenth=25)
+	@BasicValidate(name="Name", required=true, maxLenth=25)
 	private String name;
 
-	@Validate(name="Count", min=3, max=21)
+	@BasicValidate(name="Count", min=3, max=21)
 	private int count;
 }
 ...
@@ -75,8 +75,27 @@ passing the MyValidatableClass instance.  If the returned List<String> list of e
 not empty, validation failed.  The validation error messages are in the list.
 
 
+Creating your own validator:
+============================
+
+1. Create an annotation the captures the fields your validator needs to know about.
+2. Create a class that implements com.strategicgains.syntaxe.annotation.ValidationProvider
+	- AbstractValidationProvider might be a good start
+	- The perform() method returns void, and should populate the List<String> errors parameters with any validation problems
+3. Add a ValidationProvidedBy annotation to your custom validator annotation that points to your class from step 2.
+4. See the com.strategicgains.syntaxe.validators.basic|regex for examples.
+
+
 Change History:
 ===================================================================================================
+Release 0.3 (Upcoming)
+* Refactored the ValidationEngine to support the notion of multiple validators per field.
+* This refactoring also now allows for extensible validators be created outside this library.
+* Renamed com.strategicgains.syntaxe.annotation.Validate to com.strategicgains.syntaxe.validators.basic.BasicValidate
+* Removed dependency on the bpel jar, for no other reason than pluggable validators went towards interfaces instead of closures.
+* Validators are now found by being Annotations with the ValidationProvidedBy annotation.
+* Added a Regular Expression validator.
+
 Release 0.2
 * Refactored Validator into ValidationEngine.
 

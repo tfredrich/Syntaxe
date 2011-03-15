@@ -15,16 +15,17 @@
  */
 package com.strategicgains.syntaxe;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
-import com.strategicgains.jbel.exception.FunctionException;
-import com.strategicgains.jbel.function.UnaryFunction;
-import com.strategicgains.syntaxe.annotation.Validate;
+import com.strategicgains.syntaxe.annotation.ValidationProvidedBy;
+import com.strategicgains.syntaxe.annotation.ValidationProvider;
 import com.strategicgains.syntaxe.util.ClassUtils;
-import com.strategicgains.syntaxe.util.Validations;
 
 /**
  * @author toddf
@@ -32,6 +33,8 @@ import com.strategicgains.syntaxe.util.Validations;
  */
 public class ValidationEngine
 {
+	private static final ConcurrentHashMap<Integer, List<ValidationProvider<?>>> cachedValidatorsByFieldHash = new ConcurrentHashMap<Integer, List<ValidationProvider<?>>>();
+
 	private ValidationEngine()
 	{
 		// Prevents instantiation.
@@ -41,25 +44,32 @@ public class ValidationEngine
 	{
 		List<String> errors = new ArrayList<String>();
 
-		validateFields(object, errors);
+		try {
+			validateFields(object, errors);
+		} catch (Exception e) {
+			errors.add("Exception while validating: " + e.getMessage());
+		}
 
 		return errors;
 	}
 
-	private static void validateFields(Object object, List<String> errors)
+	private static void validateFields(Object object, List<String> errors) throws Exception
 	{
 		Collection<Field> fields = ClassUtils.getAllDeclaredFields(object.getClass());
-		FieldValidationClosure validation = new FieldValidationClosure(object, errors);
 
 		for (Field field : fields)
 		{
-			if (shouldValidateField(field))
+			List<ValidationProvider<?>> validators = getValidationProviders(field, object);
+			if ( !validators.isEmpty() )
 			{
 				try
                 {
-	                validation.perform(field);
+					for(ValidationProvider<?> validator : validators)
+					{
+						validator.perform(object, errors, field);
+					}
                 }
-                catch (FunctionException e)
+                catch (ValidationException e)
                 {
 	                e.printStackTrace();
                 }
@@ -67,105 +77,27 @@ public class ValidationEngine
 		}
 	}
 
-	private static String determineName(Validate annotation, Field field)
+	@SuppressWarnings("unchecked")
+	private static List<ValidationProvider<?>> getValidationProviders(Field field, Object object) throws InstantiationException, IllegalAccessException
 	{
-		return (annotation.name().isEmpty() ? field.getName() : annotation.name());
-	}
-
-	private static boolean shouldValidateField(Field field)
-	{
-		return field.isAnnotationPresent(Validate.class);
-	}
-	
-	private static class FieldValidationClosure
-	implements UnaryFunction
-	{
-		private Object object;
-		private List<String> errors;
+//		if(cachedValidatorsByFieldHash.containsKey(field.hashCode())) {
+//			return cachedValidatorsByFieldHash.get(field.hashCode());
+//		}
 		
-		public FieldValidationClosure(Object object, List<String> errors)
-		{
-			super();
-			this.errors = errors;
-			this.object = object;
+		List<ValidationProvider<?>> result = new ArrayList<ValidationProvider<?>>();
+		
+		for(Annotation a : field.getAnnotations()) {
+			if(a.annotationType().isAnnotationPresent(ValidationProvidedBy.class)) {
+				ValidationProvidedBy vpAnnotation = a.annotationType().getAnnotation(ValidationProvidedBy.class);
+				ValidationProvider<?> provider = vpAnnotation.name().newInstance();
+				provider.setAnnotation(a);
+				result.add(provider);
+			}
 		}
-
-        @Override
-        public Object perform(Object argument)
-        throws FunctionException
-        {
-        	Field field = (Field) argument;
-        	field.setAccessible(true);
-        	Validate annotation = field.getAnnotation(Validate.class);
-        	String name = determineName(annotation, field);
-        	Object value;
-            try
-            {
-	            value = field.get(object);
-            }
-            catch (Exception e)
-            {
-            	throw new FunctionException(e);
-            }
-        	
-        	if (annotation.required())
-        	{
-        		String stringValue = (value == null ? null : String.valueOf(value));
-            	Validations.require(name, stringValue, errors);
-        	}
-        	
-        	if (annotation.minLength() > 0)
-        	{
-        		String stringValue = (value == null ? null : String.valueOf(value));
-            	Validations.minLength(name, stringValue, annotation.minLength(), errors);
-        	}
-        	
-        	if (annotation.maxLength() > 0)
-        	{
-        		String stringValue = (value == null ? null : String.valueOf(value));
-            	Validations.maxLength(name, stringValue, annotation.maxLength(), errors);
-        	}
-        	
-//        	String validator = annotation.validator();
-//        	if (validator != null)
-//        	{
-//        		execValidators(name, value, validator, errors);
-//        	}
-        	
-        	if (annotation.min() != Integer.MIN_VALUE)
-        	{
-        		int intValue = ((Integer) value).intValue();
-        		Validations.greaterThanOrEqual(name, intValue, annotation.min(), errors);
-        	}
-        	
-        	if (annotation.max() != Integer.MAX_VALUE)
-        	{
-        		int intValue = ((Integer) value).intValue();
-        		Validations.lessThanOrEqual(name, intValue, annotation.max(), errors);
-        	}
-
-	        return null;
-        }
-
-		/**
-         * @param validatorString
-         */
-//        private void execValidators(String name, Object value, String validatorString, List<String> errors)
-//        {
-//        	String[] validatorNames = validatorString.split("\\+");
-//        	
-//        	for (String validatorName : validatorNames)
-//        	{
-//        		FieldValidator validator = Validator.valueOf(validatorName);
-//        		
-//        		if (validator != null)
-//        		{
-//        			if (!validator.isValid(value))
-//        			{
-//        				errors.add(validator.getMessageFor(name, value));
-//        			}
-//        		}
-//        	}
-//        }
+		
+		result = (result.size() > 0 ? result : Collections.EMPTY_LIST);
+		cachedValidatorsByFieldHash.put(field.hashCode(), result);
+		
+		return result;
 	}
 }

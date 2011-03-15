@@ -13,13 +13,15 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.syntaxe.annotation;
+package com.strategicgains.syntaxe.validators.basic;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import com.strategicgains.syntaxe.annotation.ValidationProvidedBy;
 
 /**
  * Annotations for domain property validations.
@@ -29,7 +31,8 @@ import java.lang.annotation.Target;
  */
 @Target(FIELD)
 @Retention(RUNTIME)
-public @interface Validate
+@ValidationProvidedBy(name=BasicValidationProvider.class)
+public @interface BasicValidate
 {
 	String name() default "";
 	boolean required() default false;
@@ -37,5 +40,4 @@ public @interface Validate
 	int maxLength() default -1;
 	int min() default Integer.MIN_VALUE;
 	int max() default Integer.MAX_VALUE;
-//	String[] validators() default {};
 }
