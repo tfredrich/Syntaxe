@@ -31,7 +31,7 @@ import com.strategicgains.syntaxe.validator.Validator;
  */
 @Target(TYPE)
 @Retention(RUNTIME)
-public @interface ObjectValidate
+public @interface ObjectValidation
 {
 	Class<? extends Validator> value();
 }
