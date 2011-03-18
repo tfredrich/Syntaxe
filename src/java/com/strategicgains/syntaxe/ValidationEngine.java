@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.strategicgains.syntaxe.annotation.ObjectValidate;
+import com.strategicgains.syntaxe.annotation.ObjectValidation;
 import com.strategicgains.syntaxe.annotation.ValidationProvider;
 import com.strategicgains.syntaxe.util.ClassUtils;
 import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
@@ -133,7 +133,7 @@ public class ValidationEngine
 	private static void validateObject(Object object, List<String> errors)
 	throws InstantiationException, IllegalAccessException
 	{
-		ObjectValidate annotation = object.getClass().getAnnotation(ObjectValidate.class);
+		ObjectValidation annotation = object.getClass().getAnnotation(ObjectValidation.class);
 		
 		if (annotation == null) return;
 		

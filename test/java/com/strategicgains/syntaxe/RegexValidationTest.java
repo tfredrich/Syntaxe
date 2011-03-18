@@ -21,14 +21,14 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.strategicgains.syntaxe.annotation.RegexValidate;
+import com.strategicgains.syntaxe.annotation.RegexValidation;
 
 
 /**
  * @author chrisch
  * @since Oct 8, 2010
  */
-public class RegexValidateTest
+public class RegexValidationTest
 {
 	private Inner object = new Inner();
 
@@ -70,10 +70,10 @@ public class RegexValidateTest
 	@SuppressWarnings("unused")
 	private class Inner
 	{
-		@RegexValidate(name="not-null-string", nullable=false, pattern="[a-z]{2}")
+		@RegexValidation(name="not-null-string", nullable=false, pattern="[a-z]{2}")
 		private String notNullString;
 		
-		@RegexValidate(name="nullable-string", nullable=true, pattern="[a-z]{2}")
+		@RegexValidation(name="nullable-string", nullable=true, pattern="[a-z]{2}")
 		private String nullableString;
 
 		public void setNotNullString(String notNullString)

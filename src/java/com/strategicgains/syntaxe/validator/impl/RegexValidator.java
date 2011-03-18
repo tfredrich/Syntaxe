@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.strategicgains.syntaxe.annotation.RegexValidate;
+import com.strategicgains.syntaxe.annotation.RegexValidation;
 import com.strategicgains.syntaxe.util.Validations;
 import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
 
@@ -29,11 +29,11 @@ import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
  * @since Mar 17, 2011
  */
 public class RegexValidator
-extends AnnotatedFieldValidator<RegexValidate>
+extends AnnotatedFieldValidator<RegexValidation>
 {
 	private Pattern regex;
 
-	public RegexValidator(Field field, RegexValidate annotation)
+	public RegexValidator(Field field, RegexValidation annotation)
 	{
 		super(field, annotation);
 		regex = Pattern.compile(annotation.pattern());
