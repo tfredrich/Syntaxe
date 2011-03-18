@@ -16,16 +16,19 @@
 package com.strategicgains.syntaxe;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.strategicgains.syntaxe.annotation.ValidationProvidedBy;
 import com.strategicgains.syntaxe.annotation.ValidationProvider;
 import com.strategicgains.syntaxe.util.ClassUtils;
+import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
+import com.strategicgains.syntaxe.validator.Validator;
 
 /**
  * @author toddf
@@ -33,7 +36,8 @@ import com.strategicgains.syntaxe.util.ClassUtils;
  */
 public class ValidationEngine
 {
-	private static final ConcurrentHashMap<Integer, List<ValidationProvider<?>>> cachedValidatorsByFieldHash = new ConcurrentHashMap<Integer, List<ValidationProvider<?>>>();
+	private static final ConcurrentHashMap<Class<?>, List<Field>> cachedFieldsByClass = new ConcurrentHashMap<Class<?>, List<Field>>();
+	private static final ConcurrentHashMap<Integer, List<Validator>> cachedValidatorsByFieldHash = new ConcurrentHashMap<Integer, List<Validator>>();
 
 	private ValidationEngine()
 	{
@@ -44,60 +48,81 @@ public class ValidationEngine
 	{
 		List<String> errors = new ArrayList<String>();
 
-		try {
+		try
+		{
 			validateFields(object, errors);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			errors.add("Exception while validating: " + e.getMessage());
 		}
 
 		return errors;
 	}
 
-	private static void validateFields(Object object, List<String> errors) throws Exception
+	private static void validateFields(Object object, List<String> errors)
+	throws Exception
 	{
-		Collection<Field> fields = ClassUtils.getAllDeclaredFields(object.getClass());
+		Collection<Field> fields = getAllDeclaredFields(object.getClass());
 
 		for (Field field : fields)
 		{
-			List<ValidationProvider<?>> validators = getValidationProviders(field, object);
-			if ( !validators.isEmpty() )
+			List<Validator> validators = getValidators(field, object);
+
+			if (!validators.isEmpty())
 			{
 				try
-                {
-					for(ValidationProvider<?> validator : validators)
+				{
+					for (Validator validator : validators)
 					{
-						validator.perform(object, errors, field);
+						validator.perform(object, errors);
 					}
-                }
-                catch (ValidationException e)
-                {
-	                e.printStackTrace();
-                }
+				}
+				catch (ValidationException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private static List<ValidationProvider<?>> getValidationProviders(Field field, Object object) throws InstantiationException, IllegalAccessException
+	private static List<Validator> getValidators(Field field, Object object)
+	throws InstantiationException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException
 	{
-//		if(cachedValidatorsByFieldHash.containsKey(field.hashCode())) {
-//			return cachedValidatorsByFieldHash.get(field.hashCode());
-//		}
+		List<Validator> result = cachedValidatorsByFieldHash.get(field.hashCode());
 		
-		List<ValidationProvider<?>> result = new ArrayList<ValidationProvider<?>>();
+		if (result != null)
+		{
+			return result;
+		}
 		
-		for(Annotation a : field.getAnnotations()) {
-			if(a.annotationType().isAnnotationPresent(ValidationProvidedBy.class)) {
-				ValidationProvidedBy vpAnnotation = a.annotationType().getAnnotation(ValidationProvidedBy.class);
-				ValidationProvider<?> provider = vpAnnotation.name().newInstance();
-				provider.setAnnotation(a);
+		result  = new ArrayList<Validator>();
+
+		for (Annotation a : field.getAnnotations())
+		{
+			if (a.annotationType().isAnnotationPresent(ValidationProvider.class))
+			{
+				ValidationProvider vpAnnotation = a.annotationType().getAnnotation(ValidationProvider.class);
+				Constructor<?> constructor = vpAnnotation.value().getConstructor(Field.class, a.annotationType());
+				AnnotatedFieldValidator<?> provider = (AnnotatedFieldValidator<?>) constructor.newInstance(field, a);
 				result.add(provider);
 			}
 		}
 		
-		result = (result.size() > 0 ? result : Collections.EMPTY_LIST);
 		cachedValidatorsByFieldHash.put(field.hashCode(), result);
-		
 		return result;
+	}
+	
+	private static Collection<Field> getAllDeclaredFields(Class<?> aClass)
+	{
+		List<Field> fields = cachedFieldsByClass.get(aClass);
+		
+		if (fields == null)
+		{
+			fields = ClassUtils.getAllDeclaredFields(aClass);
+			cachedFieldsByClass.put(aClass, fields);
+		}
+		
+		return fields;
 	}
 }

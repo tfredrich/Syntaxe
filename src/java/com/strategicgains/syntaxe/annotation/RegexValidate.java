@@ -1,5 +1,5 @@
 /*
-    Copyright 2010, Strategic Gains, Inc.
+    Copyright 2011, Strategic Gains, Inc.
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.syntaxe.validators.basic;
+package com.strategicgains.syntaxe.annotation;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -21,23 +21,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import com.strategicgains.syntaxe.annotation.ValidationProvidedBy;
+import com.strategicgains.syntaxe.validator.impl.RegexValidator;
 
-/**
- * Annotations for domain property validations.
- * 
- * @author toddf
- * @since Oct 7, 2010
- */
 @Target(FIELD)
 @Retention(RUNTIME)
-@ValidationProvidedBy(name=BasicValidationProvider.class)
-public @interface BasicValidate
+@ValidationProvider(RegexValidator.class)
+public @interface RegexValidate
 {
 	String name() default "";
-	boolean required() default false;
-	int minLength() default -1;
-	int maxLength() default -1;
-	int min() default Integer.MIN_VALUE;
-	int max() default Integer.MAX_VALUE;
+	String pattern();
+	boolean nullable() default false;
 }

@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.strategicgains.syntaxe.validators.regex.RegexValidate;
+import com.strategicgains.syntaxe.annotation.RegexValidate;
 
 
 /**
@@ -38,7 +38,7 @@ public class RegexValidateTest
 		object.setNotNullString("abc");
 		List<String> errors = ValidationEngine.validate(object);
 		assertEquals(1, errors.size());
-		assertEquals("not-null-string does not match the regular expression pattern", errors.get(0));
+		assertEquals("not-null-string does not match the regular expression pattern: [a-z]{2}", errors.get(0));
 	}
 
 	@Test
@@ -55,7 +55,7 @@ public class RegexValidateTest
 		object.setNotNullString(null);
 		List<String> errors = ValidationEngine.validate(object);
 		assertEquals(1, errors.size());
-		assertEquals("not-null-string cannot be null", errors.get(0));
+		assertEquals("not-null-string is required", errors.get(0));
 	}
 
 	@Test

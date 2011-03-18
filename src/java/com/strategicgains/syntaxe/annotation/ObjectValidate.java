@@ -15,17 +15,23 @@
 */
 package com.strategicgains.syntaxe.annotation;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
+import com.strategicgains.syntaxe.validator.Validator;
 
-@Target(ANNOTATION_TYPE)
+/**
+ * Declares a Validator class as the validation provider for instances of this type.
+ * 
+ * @author toddf
+ * @since Mar 17, 2011
+ */
+@Target(TYPE)
 @Retention(RUNTIME)
-public @interface ValidationProvider
+public @interface ObjectValidate
 {
-	Class<? extends AnnotatedFieldValidator<?>> value();
+	Class<? extends Validator> value();
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2011, Strategic Gains, Inc.
+    Copyright 2010, Strategic Gains, Inc.
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -15,17 +15,29 @@
 */
 package com.strategicgains.syntaxe.annotation;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
+import com.strategicgains.syntaxe.validator.impl.BasicValidator;
 
-@Target(ANNOTATION_TYPE)
+/**
+ * Annotations for domain property validations.
+ * 
+ * @author toddf
+ * @since Oct 7, 2010
+ */
+@Target(FIELD)
 @Retention(RUNTIME)
-public @interface ValidationProvider
+@ValidationProvider(BasicValidator.class)
+public @interface BasicValidate
 {
-	Class<? extends AnnotatedFieldValidator<?>> value();
+	String name() default "";
+	boolean required() default false;
+	int minLength() default -1;
+	int maxLength() default -1;
+	int min() default Integer.MIN_VALUE;
+	int max() default Integer.MAX_VALUE;
 }

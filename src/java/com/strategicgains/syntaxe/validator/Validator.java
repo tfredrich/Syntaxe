@@ -13,19 +13,15 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.syntaxe.annotation;
+package com.strategicgains.syntaxe.validator;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.util.List;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
-
-@Target(ANNOTATION_TYPE)
-@Retention(RUNTIME)
-public @interface ValidationProvider
+/**
+ * @author toddf
+ * @since Mar 16, 2011
+ */
+public interface Validator
 {
-	Class<? extends AnnotatedFieldValidator<?>> value();
+	public void perform(Object instance, List<String> errors);
 }

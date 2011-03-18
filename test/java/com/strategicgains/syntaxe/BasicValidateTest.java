@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.strategicgains.syntaxe.validators.basic.BasicValidate;
+import com.strategicgains.syntaxe.annotation.BasicValidate;
 
 
 /**
