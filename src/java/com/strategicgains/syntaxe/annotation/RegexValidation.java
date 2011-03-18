@@ -26,7 +26,7 @@ import com.strategicgains.syntaxe.validator.impl.RegexValidator;
 @Target(FIELD)
 @Retention(RUNTIME)
 @ValidationProvider(RegexValidator.class)
-public @interface RegexValidate
+public @interface RegexValidation
 {
 	String name() default "";
 	String pattern();
