@@ -21,10 +21,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.strategicgains.syntaxe.annotation.ObjectValidate;
 import com.strategicgains.syntaxe.annotation.ValidationProvider;
 import com.strategicgains.syntaxe.util.ClassUtils;
 import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
@@ -37,7 +37,8 @@ import com.strategicgains.syntaxe.validator.Validator;
 public class ValidationEngine
 {
 	private static final ConcurrentHashMap<Class<?>, List<Field>> cachedFieldsByClass = new ConcurrentHashMap<Class<?>, List<Field>>();
-	private static final ConcurrentHashMap<Integer, List<Validator>> cachedValidatorsByFieldHash = new ConcurrentHashMap<Integer, List<Validator>>();
+	private static final ConcurrentHashMap<Integer, List<Validator>> cachedValidatorsByHashcode = new ConcurrentHashMap<Integer, List<Validator>>();
+	private static final ConcurrentHashMap<Class<?>, Validator> cachedObjectValidatorsByClass = new ConcurrentHashMap<Class<?>, Validator>();
 
 	private ValidationEngine()
 	{
@@ -51,6 +52,8 @@ public class ValidationEngine
 		try
 		{
 			validateFields(object, errors);
+			validateObject(object, errors);
+			validateIfValidatable(object);
 		}
 		catch (Exception e)
 		{
@@ -87,30 +90,31 @@ public class ValidationEngine
 	}
 
 	private static List<Validator> getValidators(Field field, Object object)
-	throws InstantiationException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException
+	throws InstantiationException, IllegalAccessException, SecurityException,
+		NoSuchMethodException, IllegalArgumentException, InvocationTargetException
 	{
-		List<Validator> result = cachedValidatorsByFieldHash.get(field.hashCode());
+		List<Validator> validators = cachedValidatorsByHashcode.get(field.hashCode());
 		
-		if (result != null)
+		if (validators != null)
 		{
-			return result;
+			return validators;
 		}
 		
-		result  = new ArrayList<Validator>();
+		validators  = new ArrayList<Validator>();
 
 		for (Annotation a : field.getAnnotations())
 		{
 			if (a.annotationType().isAnnotationPresent(ValidationProvider.class))
 			{
-				ValidationProvider vpAnnotation = a.annotationType().getAnnotation(ValidationProvider.class);
-				Constructor<?> constructor = vpAnnotation.value().getConstructor(Field.class, a.annotationType());
+				ValidationProvider providerAnnotation = a.annotationType().getAnnotation(ValidationProvider.class);
+				Constructor<?> constructor = providerAnnotation.value().getConstructor(Field.class, a.annotationType());
 				AnnotatedFieldValidator<?> provider = (AnnotatedFieldValidator<?>) constructor.newInstance(field, a);
-				result.add(provider);
+				validators.add(provider);
 			}
 		}
 		
-		cachedValidatorsByFieldHash.put(field.hashCode(), result);
-		return result;
+		cachedValidatorsByHashcode.put(field.hashCode(), validators);
+		return validators;
 	}
 	
 	private static Collection<Field> getAllDeclaredFields(Class<?> aClass)
@@ -124,5 +128,31 @@ public class ValidationEngine
 		}
 		
 		return fields;
+	}
+
+	private static void validateObject(Object object, List<String> errors)
+	throws InstantiationException, IllegalAccessException
+	{
+		ObjectValidate annotation = object.getClass().getAnnotation(ObjectValidate.class);
+		
+		if (annotation == null) return;
+		
+		Validator validator = cachedObjectValidatorsByClass.get(object.getClass());
+		
+		if (validator == null)
+		{
+			validator = annotation.value().newInstance();
+			cachedObjectValidatorsByClass.put(object.getClass(), validator);
+		}
+		
+		validator.perform(object, errors);
+	}
+
+	private static void validateIfValidatable(Object object)
+	{
+		if (Validatable.class.isAssignableFrom(object.getClass()))
+		{
+			((Validatable) object).validate();
+		}
 	}
 }
