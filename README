@@ -1,8 +1,17 @@
 Syntaxe is an annotations-based, functional-style syntactic (and semantic) domain model validation
 framework for Java.
 
+Simply annotate fields in your domain model and invoke the ValidationEngine.validat() method to
+accomplish syntactic validation. Multiple annotations per field can be used to enforce multiple
+validations, if necessary.
+
+Supported annotations are:
+1) @StringValidation - enforces 'required-ness', min/max length.
+2) @RegexValidation - enforces the string field to comply with a regular expression.
+3) @IntegerValidation - enforces min/max value.
+
 Created to be simple, Syntaxe supports the following:
-1) @BasicValidate (annotation) - which supports required, less-than, greater-than validations on fields.
+1) Annotation-based validations on fields.
 2) Functional-style closures that allow users to create additional custom validations,
    whether syntactic or semantic.
 3) Validatable interface which calls out the validation contract.
@@ -13,22 +22,48 @@ Created to be simple, Syntaxe supports the following:
 6) Validator utility class that implements validation on an instance that leverages the 
    @BasicValidate annotation.
 
+In addition Syntaxe allows annotation of an entire class with the @ObjectValidation annotation
+to provide object-wide validation in addition to field-level annotation validations.
+
 Sample Usage:
 ===================================================================================================
-Option 1, extend AbstractValidatable
+Option 1, POJO with annotations.
+--This option enables POJO validations without requiring extension or implementation, using
+  annotations and the ValidationEngine to accomplish validation.
+
+public class MyValidatableClass
+{
+	@StringValidation(name="ID", required=true)
+	private String id;
+	
+	@StringValidation(name="Name", required=true, maxLenth=25)
+	private String name;
+
+	@IntegerValidation(name="Count", min=3, max=21)
+	private int count;
+	
+	@RegexValidation(name="Email Address", pattern="(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})")
+	private String email;
+}
+...
+elsewhere (e.g. before persisting to storage) call the ValidationEngine.validate(object) method
+passing the MyValidatableClass instance.  If the returned List<String> list of error messages is
+not empty, validation failed.  The validation error messages are in the list.
+
+Option 2, extend AbstractValidatable
 --This provides the capability to override the validateInto(StringBuffer) method to provide custom
   validations.
 
 public class MyValidatableClass
 extends AbstractValidatable
 {
-	@BasicValidate(name="ID", required=true)
+	@StringValidation(name="ID", required=true)
 	private String id;
 	
-	@BasicValidate(name="Name", required=true, minLength=5, maxLenth=25)
+	@StringValidation(name="Name", required=true, minLength=5, maxLenth=25)
 	private String name;
 
-	@BasicValidate(name="Count", min=3, max=21)
+	@IntegerValidation(name="Count", min=3, max=21)
 	private int count;
 }
 ...
@@ -36,7 +71,7 @@ elsewhere (e.g. before persisting to storage) call the validate() method on the 
 instance.
 
 
-Option 2, Validatable implementor, no annotations.
+Option 3, Validatable implementor, no annotations.
 --This option allows complete customization of validations by implementing the validate() method
   and throwing a ValidationException when validation fails.
   
@@ -54,26 +89,20 @@ implements Validatable
 	}
 }
 
-Option 3, POJO with annotations.
---This option enables POJO validations without requiring extension or implementation, using
-  annotations and the ValidationEngine to accomplish validation.
+Option 4, Object Validation annotation.
+--This option enables POJO validations, separating the validation concerns from the object
+  itself.  The ValidationEngine will invoke the assigned validator.
+--Can be combined with Option 1 (above), POJO with annotations also.
 
-public class MyValidatableClass
+@ObjectValidation(MyPojoValidation.class)
+public class SomePojo
 {
-	@BasicValidate(name="ID", required=true)
-	private String id;
-	
-	@BasicValidate(name="Name", required=true, maxLenth=25)
-	private String name;
-
-	@BasicValidate(name="Count", min=3, max=21)
-	private int count;
+	...
 }
 ...
 elsewhere (e.g. before persisting to storage) call the ValidationEngine.validate(object) method
 passing the MyValidatableClass instance.  If the returned List<String> list of error messages is
 not empty, validation failed.  The validation error messages are in the list.
-
 
 Creating your own validator:
 ============================

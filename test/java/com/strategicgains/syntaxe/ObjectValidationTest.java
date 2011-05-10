@@ -22,6 +22,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.strategicgains.syntaxe.annotation.ObjectValidation;
+import com.strategicgains.syntaxe.validator.Validator;
+
 
 /**
  * @author toddf
@@ -45,7 +48,7 @@ public class ObjectValidationTest
 	{
 		InnerTwo instance = new InnerTwo();
 		List<String> errors = ValidationEngine.validate(instance);
-		assertEquals(1, instance.getValidationCount());
+		assertEquals(0, instance.getValidationCount());
 		assertTrue(errors.isEmpty());
 	}
 
