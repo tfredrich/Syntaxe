@@ -42,7 +42,7 @@ public class Validations
 		
 		if (value.length() > max)
 		{
-			errors.add(name + " is limited to " + max + " characters.");
+			errors.add(name + " is limited to " + max + " characters");
 		}
 	}
 	
@@ -52,13 +52,13 @@ public class Validations
 		
 		if (value.length() < min)
 		{
-			errors.add(name + " must contain more-than " + min + " characters.");
+			errors.add(name + " must contain more-than " + min + " characters");
 		}
 	}
 
 	public static void lessThanOrEqual(String name, int actual, int max, List<String> errors)
 	{
-		if (actual >= max)
+		if (actual > max)
 		{
 			errors.add(name + " must be less-than or equal-to " + max);
 		}
@@ -66,7 +66,7 @@ public class Validations
 
 	public static void greaterThanOrEqual(String name, int actual, int min, List<String> errors)
 	{
-		if (actual <= min)
+		if (actual < min)
 		{
 			errors.add(name + " must be greater-than or equal-to " + min);
 		}
