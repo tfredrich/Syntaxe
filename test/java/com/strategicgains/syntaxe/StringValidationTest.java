@@ -71,6 +71,12 @@ public class StringValidationTest
 		assertTrue(errors.isEmpty());
 	}
 	
+	@Test(expected=ValidationException.class)
+	public void shouldThrowOnValidationError()
+	{
+		ValidationEngine.validateAndThrow(object);
+	}
+	
 	@SuppressWarnings("unused")
 	private class Inner
 	{

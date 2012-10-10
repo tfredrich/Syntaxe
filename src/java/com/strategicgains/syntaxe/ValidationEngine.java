@@ -45,6 +45,14 @@ public class ValidationEngine
 		// Prevents instantiation.
 	}
 
+	/**
+	 * Validates the object, returning a list of error messages
+	 * if validation fails.  If the list is empty, no errors
+	 * occurred.
+	 * 
+	 * @param object
+	 * @return a List of error message strings. Never null.
+	 */
 	public static List<String> validate(Object object)
 	{
 		List<String> errors = new ArrayList<String>();
@@ -61,6 +69,23 @@ public class ValidationEngine
 		}
 
 		return errors;
+	}
+
+	/**
+	 * Validates the object, throwing a ValidationException
+	 * if there were errors.
+	 * 
+	 * @param object
+	 * @throws ValidationException containing the error messages if a validation error occurs.
+	 */
+	public static void validateAndThrow(Object object)
+	{
+		List<String> errors = validate(object);
+		
+		if (!errors.isEmpty())
+		{
+			throw new ValidationException(errors);
+		}
 	}
 
 	private static void validateFields(Object object, List<String> errors)

@@ -117,7 +117,11 @@ Creating your own validator:
 
 Change History:
 ===================================================================================================
-Release 0.3 (Upcoming)
+Release 0.4 (current master branch)
+* Introduced ValiationEngine.validateAndThrow(Object), which throws a ValidationException if there
+  are validation errors in the object.
+
+Release 0.3
 * Refactored the ValidationEngine to support the notion of multiple validators per field.
 * This refactoring also now allows for extensible validators be created outside this library.
 * Renamed com.strategicgains.syntaxe.annotation.Validate to com.strategicgains.syntaxe.validators.basic.BasicValidate
