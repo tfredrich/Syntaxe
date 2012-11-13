@@ -7,21 +7,21 @@ validations, if necessary.
 
 Supported annotations are:
 
-# @StringValidation - enforces 'required-ness', min/max length.
-# @RegexValidation - enforces the string field to comply with a regular expression.
-# @IntegerValidation - enforces min/max value.
+* @StringValidation - enforces 'required-ness', min/max length.
+* @RegexValidation - enforces the string field to comply with a regular expression.
+* @IntegerValidation - enforces min/max value.
 
 Created to be simple, Syntaxe supports the following:
 
-# Annotation-based validations on fields.
-# Functional-style closures that allow users to create additional custom validations,
+* Annotation-based validations on fields.
+* Functional-style closures that allow users to create additional custom validations,
    whether syntactic or semantic.
-# Validatable interface which calls out the validation contract.
-# AbstractValidatable which is the default implementation of Validatable, which supports the
+* Validatable interface which calls out the validation contract.
+* AbstractValidatable which is the default implementation of Validatable, which supports the
    use of @Validate and functional validations.
-# Validations utility class containing foreign methods to perform your own default validations
+* Validations utility class containing foreign methods to perform your own default validations
    such as requiredness, less-than, greater-than.
-# Validator utility class that implements validation on an instance that leverages the 
+* Validator utility class that implements validation on an instance that leverages the 
    @BasicValidate annotation.
 
 In addition Syntaxe allows annotation of an entire class with the @ObjectValidation annotation
@@ -129,12 +129,12 @@ not empty, validation failed.  The validation error messages are in the list.
 Creating your own validator:
 ============================
 
-# Create an annotation the captures the fields your validator needs to know about.
-# Create a class that implements com.strategicgains.syntaxe.annotation.ValidationProvider
+1. Create an annotation the captures the fields your validator needs to know about.
+2. Create a class that implements com.strategicgains.syntaxe.annotation.ValidationProvider
 	* AbstractValidationProvider might be a good start
 	* The perform() method returns void, and should populate the List<String> errors parameters with any validation problems
-# Add a ValidationProvidedBy annotation to your custom validator annotation that points to your class from step 2.
-# See the com.strategicgains.syntaxe.validators.basic|regex for examples.
+3. Add a ValidationProvidedBy annotation to your custom validator annotation that points to your class from step 2.
+4. See the com.strategicgains.syntaxe.validators.basic|regex for examples.
 
 
 Change History:
