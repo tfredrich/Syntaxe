@@ -44,7 +44,7 @@ extends AnnotatedFieldValidator<RegexValidation>
 	{
 		Object value = getValue(instance);
 		String name = determineFieldName();
-		validate(name, value, getAnnotation().nullable(), regex, errors);
+		validate(name, value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);
 	}
 
 	protected String determineFieldName()
@@ -52,7 +52,7 @@ extends AnnotatedFieldValidator<RegexValidation>
 		return (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
 	}
 	
-	public static void validate(String name, Object value, boolean isNullable, Pattern regex, List<String> errors)
+	public static void validate(String name, Object value, boolean isNullable, Pattern regex, String message, List<String> errors)
 	{
 		if (value != null && !(value instanceof String))
 		{
@@ -73,7 +73,14 @@ extends AnnotatedFieldValidator<RegexValidation>
 	
 			if (!matcher.matches())
 			{
-				errors.add(name + " does not match the regular expression pattern: " + regex.pattern());
+				if (message != null && !message.trim().isEmpty())
+				{
+					errors.add(name + " " + message);
+				}
+				else
+				{
+					errors.add(name + " does not match the regular expression pattern: " + regex.pattern());
+				}
 			}
 		}
 	}

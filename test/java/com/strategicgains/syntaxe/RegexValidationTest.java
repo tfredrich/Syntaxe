@@ -42,6 +42,16 @@ public class RegexValidationTest
 	}
 
 	@Test
+	public void shouldFailPatternWithMessage()
+	{
+		object.setNotNullString("ab");
+		object.setNullableString("abc");
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(1, errors.size());
+		assertEquals("nullable-string must be a two-character, lower-case string", errors.get(0));
+	}
+
+	@Test
 	public void shouldPassPattern()
 	{
 		object.setNotNullString("ab");
@@ -67,13 +77,12 @@ public class RegexValidationTest
 		assertEquals(0, errors.size());
 	}
 
-	@SuppressWarnings("unused")
 	private class Inner
 	{
 		@RegexValidation(name="not-null-string", nullable=false, pattern="[a-z]{2}")
 		private String notNullString;
 		
-		@RegexValidation(name="nullable-string", nullable=true, pattern="[a-z]{2}")
+		@RegexValidation(name="nullable-string", nullable=true, pattern="[a-z]{2}", message = "must be a two-character, lower-case string")
 		private String nullableString;
 
 		public void setNotNullString(String notNullString)

@@ -31,4 +31,5 @@ public @interface RegexValidation
 	String name() default "";
 	String pattern();
 	boolean nullable() default false;
+	String message() default "";
 }
