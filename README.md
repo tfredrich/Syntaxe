@@ -10,22 +10,20 @@ Supported annotations are:
 * @StringValidation - enforces 'required-ness', min/max length.
 * @RegexValidation - enforces the string field to comply with a regular expression.
 * @IntegerValidation - enforces min/max value.
+* @FieldValidation - utilize your own Validator implementation for the annotated field/property.
+* @ObjectValidation - utilize your own Validator implementation for the annotated class.
 
 Created to be simple, Syntaxe supports the following:
 
-* Annotation-based validations on fields.
-* Functional-style closures that allow users to create additional custom validations,
-   whether syntactic or semantic.
-* Validatable interface which calls out the validation contract.
+* Annotation-based validations on fields and objects.
 * AbstractValidatable which is the default implementation of Validatable, which supports the
    use of @Validate and functional validations.
 * Validations utility class containing foreign methods to perform your own default validations
    such as requiredness, less-than, greater-than.
-* Validator utility class that implements validation on an instance that leverages the 
-   @BasicValidate annotation.
+* Validatable interface which calls out the validation contract for in-object validations.
 
 In addition Syntaxe allows annotation of an entire class with the @ObjectValidation annotation
-to provide object-wide validation in addition to field-level annotation validations.
+to provide object-wide validation in addition to field-level annotation-driven validations.
 
 Sample Usage:
 ===================================================================================================
@@ -129,18 +127,19 @@ not empty, validation failed.  The validation error messages are in the list.
 Creating your own validator:
 ============================
 
-1. Create an annotation the captures the fields your validator needs to know about.
+1. Create an annotation that captures the fields your validator needs to know about (e.g. Message, etc.).
 2. Create a class that implements com.strategicgains.syntaxe.annotation.ValidationProvider
 	* AbstractValidationProvider might be a good start
 	* The perform() method returns void, and should populate the List<String> errors parameters with any validation problems
 3. Add a ValidationProvidedBy annotation to your custom validator annotation that points to your class from step 2.
-4. See the com.strategicgains.syntaxe.validators.basic|regex for examples.
+4. See the com.strategicgains.syntaxe.validators.basic or com.strategicgains.syntaxe.validators.regex for examples.
 
 
 Change History:
 ===================================================================================================
 Release 0.4.x (current master branch)
 -------------------------------------
+* Introduced the @FieldValidation annotation to utilize your own Validator at the field level.
 * Introduced message(), optional parameter to @RegexValidation annotation to facilitate describing
   the message to end-users instead of giving them the cryptic regex message.
 * Introduced ValiationEngine.validateAndThrow(Object), which throws a ValidationException if there

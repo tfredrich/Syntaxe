@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.strategicgains.syntaxe.annotation.FieldValidation;
 import com.strategicgains.syntaxe.annotation.ObjectValidation;
 import com.strategicgains.syntaxe.annotation.ValidationProvider;
 import com.strategicgains.syntaxe.util.ClassUtils;
@@ -136,8 +137,13 @@ public class ValidationEngine
 				AnnotatedFieldValidator<?> provider = (AnnotatedFieldValidator<?>) constructor.newInstance(field, a);
 				validators.add(provider);
 			}
+			else if (a.annotationType().isAssignableFrom(FieldValidation.class))
+			{
+				Class<? extends Validator> vc = ((FieldValidation) a).value();
+				validators.add(vc.newInstance());
+			}
 		}
-		
+
 		cachedValidatorsByHashcode.put(field.hashCode(), validators);
 		return validators;
 	}

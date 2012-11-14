@@ -22,9 +22,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.strategicgains.syntaxe.annotation.ObjectValidation;
-import com.strategicgains.syntaxe.validator.Validator;
-
 
 /**
  * @author toddf
