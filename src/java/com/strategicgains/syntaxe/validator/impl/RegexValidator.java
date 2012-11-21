@@ -44,14 +44,23 @@ extends AnnotatedFieldValidator<RegexValidation>
 	{
 		Object value = getValue(instance);
 		String name = determineFieldName();
-		validate(name, value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);
+		
+		if (isArray())
+		{
+			// TODO: validate the elements in the array.
+			throw new UnsupportedOperationException("Validating an array of REGEX strings is not currently supported");
+		}
+		else
+		{
+			validate(name, value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);
+		}
 	}
 
 	protected String determineFieldName()
 	{
 		return (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
 	}
-	
+
 	public static void validate(String name, Object value, boolean isNullable, Pattern regex, String message, List<String> errors)
 	{
 		if (value != null && !(value instanceof String))

@@ -43,6 +43,12 @@ extends AnnotatedFieldValidator<IntegerValidation>
     {
 		String name = determineName();
 		Object value = getValue(instance);
+		
+		if (isArray())
+		{
+			// TODO: validate the elements in the array.
+			throw new UnsupportedOperationException("Validating an array of Integer instances is not currently supported");
+		}
 
 		if (getAnnotation().min() != Integer.MIN_VALUE)
 		{

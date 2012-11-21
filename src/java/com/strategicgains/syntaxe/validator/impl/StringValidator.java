@@ -90,10 +90,7 @@ extends AnnotatedFieldValidator<StringValidation>
 		}
     }
 
-	/**
-     * @return
-     */
-    private String determineName()
+    protected String determineName()
     {
 		return (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
     }
