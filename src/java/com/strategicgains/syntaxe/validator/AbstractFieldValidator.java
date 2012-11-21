@@ -40,6 +40,11 @@ implements Validator
 		return field.getName();
 	}
 
+	public boolean isArray()
+	{
+		return field.getType().isArray();
+	}
+
 	public Object getValue(Object object) 
 	throws ValidationException
 	{

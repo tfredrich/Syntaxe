@@ -27,7 +27,7 @@ public class Validations
 	{
 		// Prevent instantiation.
 	}
-	
+
 	public static void require(String name, String value, List<String> errors)
 	{
     	if (value == null || value.trim().isEmpty())

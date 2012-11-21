@@ -43,22 +43,49 @@ extends AnnotatedFieldValidator<StringValidation>
     {
 		String name = determineName();
 		Object value = getValue(instance);
-
-		if (getAnnotation().required())
+		
+		if (isArray())
 		{
-			String stringValue = (value == null ? null : String.valueOf(value));
+			validateArray(name, (value == null ? null : ((Object[]) value)), errors);
+		}
+		else
+		{
+			validateString(name, (value == null ? null : String.valueOf(value)), errors);
+		}
+    }
+
+	public void validateArray(String name, Object[] values, List<String> errors)
+    {
+	    if (getAnnotation().required())
+		{
+	    	if (values == null || values.length == 0)
+	    	{
+	    		errors.add(name + " is required");
+	    	}
+		}
+	 
+	    if (values == null) return;
+	    
+    	for (Object value : values)
+    	{
+			validateString(name, (value == null ? null : String.valueOf(value)), errors);
+    	}
+    }
+
+	private void validateString(String name, String stringValue, List<String> errors)
+    {
+	    if (getAnnotation().required())
+		{
 			Validations.require(name, stringValue, errors);
 		}
 
 		if (getAnnotation().minLength() > 0)
 		{
-			String stringValue = (value == null ? null : String.valueOf(value));
 			Validations.minLength(name, stringValue, getAnnotation().minLength(), errors);
 		}
 
 		if (getAnnotation().maxLength() > 0)
 		{
-			String stringValue = (value == null ? null : String.valueOf(value));
 			Validations.maxLength(name, stringValue, getAnnotation().maxLength(), errors);
 		}
     }

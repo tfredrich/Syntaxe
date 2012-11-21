@@ -76,6 +76,58 @@ public class StringValidationTest
 	{
 		ValidationEngine.validateAndThrow(object);
 	}
+
+	@Test
+	public void shouldRequireStringArray()
+	{
+		InnerToo o = new InnerToo();
+		List<String> errors = ValidationEngine.validate(o);
+		assertEquals(1, errors.size());
+		assertTrue(errors.get(0).contains("Required Array"));		
+	}
+
+	@Test
+	public void shouldRequireStringArrayElements()
+	{
+		InnerToo o = new InnerToo();
+		o.requiredArray = new String[0];
+		List<String> errors = ValidationEngine.validate(o);
+		assertEquals(1, errors.size());
+		assertTrue(errors.get(0).contains("Required Array"));		
+	}
+
+	@Test
+	public void shouldValidateRequiredStringArrayElements()
+	{
+		InnerToo o = new InnerToo();
+		o.requiredArray = new String[] {"a", "toddfredrich", "toddf"};
+		List<String> errors = ValidationEngine.validate(o);
+		assertEquals(2, errors.size());
+		assertTrue(errors.get(0).contains("Required Array"));		
+		assertTrue(errors.get(1).contains("Required Array"));		
+	}
+
+	@Test
+	public void shouldPassArrayValidation()
+	{
+		InnerToo o = new InnerToo();
+		o.requiredArray = new String[] {"toddf"};
+		o.stringArray = new String[0];
+		List<String> errors = ValidationEngine.validate(o);
+		assertTrue(errors.isEmpty());
+	}
+
+	@Test
+	public void shouldFailNonRequiredArrayValidation()
+	{
+		InnerToo o = new InnerToo();
+		o.requiredArray = new String[] {"toddf"};
+		o.stringArray = new String[] {"toddf", "toddfredrich", "isthebomb"};
+		List<String> errors = ValidationEngine.validate(o);
+		assertEquals(2, errors.size());
+		assertTrue(errors.get(0).contains("String Array"));
+		assertTrue(errors.get(1).contains("String Array"));
+	}
 	
 	@SuppressWarnings("unused")
 	private class Inner
@@ -109,5 +161,14 @@ public class StringValidationTest
 		{
 			this.unnamedString = value;
 		}
+	}
+	
+	private class InnerToo
+	{
+		@StringValidation(name = "Required Array", required = true, maxLength = 6, minLength = 2)
+		public String[] requiredArray = null;
+		
+		@StringValidation(name = "String Array", required = false, maxLength = 6, minLength = 1)
+		public String[] stringArray = null;		
 	}
 }
