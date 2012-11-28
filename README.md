@@ -144,6 +144,7 @@ Release 0.4.x (current master branch)
   the message to end-users instead of giving them the cryptic regex message.
 * Introduced ValiationEngine.validateAndThrow(Object), which throws a ValidationException if there
   are validation errors in the object.
+* Fixed poor wording in Validations.minLength() error message.
 
 Release 0.3
 -----------

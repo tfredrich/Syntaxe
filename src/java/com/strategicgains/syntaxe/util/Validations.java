@@ -23,6 +23,11 @@ import java.util.List;
  */
 public class Validations
 {
+	private static final String MAX_LENGTH_ERROR = "%s is limited to %d characters";
+	private static final String MIN_LENGTH_ERROR = "%s must contain at least %d characters";
+	private static final String LESS_THAN_OR_EQUAL_ERROR = "%s must be less-than or equal-to %d";
+	private static final String GREATER_THAN_OR_EQUAL_ERROR = "%s must be greater-than or equal-to %d";
+	
 	private Validations()
 	{
 		// Prevent instantiation.
@@ -42,7 +47,7 @@ public class Validations
 		
 		if (value.length() > max)
 		{
-			errors.add(name + " is limited to " + max + " characters");
+			errors.add(String.format(MAX_LENGTH_ERROR, name, max));
 		}
 	}
 	
@@ -52,7 +57,7 @@ public class Validations
 		
 		if (value.length() < min)
 		{
-			errors.add(name + " must contain more-than " + min + " characters");
+			errors.add(String.format(MIN_LENGTH_ERROR, name, min));
 		}
 	}
 
@@ -60,7 +65,7 @@ public class Validations
 	{
 		if (actual > max)
 		{
-			errors.add(name + " must be less-than or equal-to " + max);
+			errors.add(String.format(LESS_THAN_OR_EQUAL_ERROR, name, max));
 		}
 	}
 
@@ -68,7 +73,7 @@ public class Validations
 	{
 		if (actual < min)
 		{
-			errors.add(name + " must be greater-than or equal-to " + min);
+			errors.add(String.format(GREATER_THAN_OR_EQUAL_ERROR, name, min));
 		}
 	}
 }

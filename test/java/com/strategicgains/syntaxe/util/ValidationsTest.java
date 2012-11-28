@@ -93,7 +93,7 @@ public class ValidationsTest
 		Validations.minLength("min length", "1234", 5, errors);
 		assertFalse(errors.isEmpty());
 		assertEquals(1, errors.size());
-		assertEquals("min length must contain more-than 5 characters", errors.get(0));
+		assertEquals("min length must contain at least 5 characters", errors.get(0));
 	}
 
 	@Test
