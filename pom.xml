@@ -3,7 +3,7 @@
 
 	<groupId>com.strategicgains</groupId>
 	<artifactId>Syntaxe</artifactId>
-	<version>0.4.3</version>
+	<version>0.4.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<parent>
@@ -98,7 +98,7 @@
 		<url>git@github.com:RestExpress/Syntaxe.git</url>
 		<connection>scm:git:git@github.com:RestExpress/Syntaxe.git</connection>
 		<developerConnection>scm:git:git@github.com:RestExpress/Syntaxe.git</developerConnection>
-	  <tag>v0.4.3-20130108-1917</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<developers>
