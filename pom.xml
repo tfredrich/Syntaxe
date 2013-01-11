@@ -1,6 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<name>Syntaxe</name>
+	<description>Annotations-Driven Java Domain Model Syntactic and Semantic Validation</description>
+	<url>https://github.com/RestExpress/Syntaxe</url>
 	<groupId>com.strategicgains</groupId>
 	<artifactId>Syntaxe</artifactId>
 	<version>0.4.4-SNAPSHOT</version>
@@ -11,10 +14,6 @@
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
-
-	<name>Syntaxe</name>
-	<description>Annotations-Driven Java Domain Model Syntactic and Semantic Validation</description>
-	<url>https://github.com/RestExpress/Syntaxe</url>
 
 	<licenses>
 		<license>
@@ -107,8 +106,7 @@
 		<url>git@github.com:RestExpress/Syntaxe.git</url>
 		<connection>scm:git:git@github.com:RestExpress/Syntaxe.git</connection>
 		<developerConnection>scm:git:git@github.com:RestExpress/Syntaxe.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+	</scm>
 
 	<developers>
 		<developer>

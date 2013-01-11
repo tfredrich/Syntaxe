@@ -1,3 +1,17 @@
+Syntaxe - Domain Model Validation
+=================================
+Maven usage:
+```xml
+<dependency>
+	<groupId>com.strategicgains</groupId>
+	<artifactId>Syntaxe</artifactId>
+	<version>0.4.3</version>
+	<type>jar</type>
+</dependency>
+```
+Or download the artifact directly from the Maven Central Repo:
+```http://search.maven.org/#search%7Cga%7C1%7CSyntaxe```
+
 Syntaxe is an annotations-based, functional-style syntactic (and semantic) domain model validation
 framework for Java.
 
@@ -6,7 +20,6 @@ accomplish syntactic validation. Multiple annotations per field can be used to e
 validations, if necessary.
 
 Supported annotations are:
-
 * @StringValidation - enforces 'required-ness', min/max length.
 * @RegexValidation - enforces the string field to comply with a regular expression.
 * @IntegerValidation - enforces min/max value.
