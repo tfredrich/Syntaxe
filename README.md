@@ -10,7 +10,7 @@ Maven usage:
 </dependency>
 ```
 Or download the artifact directly from the Maven Central Repo:
-```http://search.maven.org/#search%7Cga%7C1%7CSyntaxe```
+http://search.maven.org/#search%7Cga%7C1%7CSyntaxe
 
 Syntaxe is an annotations-based, functional-style syntactic (and semantic) domain model validation
 framework for Java.
