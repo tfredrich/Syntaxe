@@ -1,18 +1,5 @@
 Syntaxe - Domain Model Validation
 =================================
-Maven usage:
-```xml
-<dependency>
-	<groupId>com.strategicgains</groupId>
-	<artifactId>Syntaxe</artifactId>
-	<version>0.4.3</version>
-	<type>jar</type>
-</dependency>
-```
-Or download the artifact directly from the Maven Central Repo:
-http://search.maven.org/#search%7Cga%7C1%7CSyntaxe
---------------------------------------------------
-
 Syntaxe is an annotations-based, functional-style syntactic (and semantic) domain model validation
 framework for Java.
 
@@ -39,6 +26,44 @@ Created to be simple, Syntaxe supports the following:
 In addition Syntaxe allows annotation of an entire class with the @ObjectValidation annotation
 to provide object-wide validation in addition to field-level annotation-driven validations.
 
+Maven Usage
+===========
+Stable:
+```xml
+		<dependency>
+			<groupId>com.strategicgains</groupId>
+			<artifactId>Syntaxe</artifactId>
+			<version>0.4.3</version>
+		</dependency>
+```
+Development:
+```xml
+		<dependency>
+			<groupId>com.strategicgains</groupId>
+			<artifactId>Syntaxe</artifactId>
+			<version>0.4.4-SNAPSHOT</version>
+		</dependency>
+```
+Or download the jar directly from: 
+http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22Syntaxe%22
+
+Note that to use the SNAPSHOT version, you must enable snapshots and a repository in your pom file as follows:
+```xml
+  <profiles>
+    <profile>
+       <id>allow-snapshots</id>
+          <activation><activeByDefault>true</activeByDefault></activation>
+       <repositories>
+         <repository>
+           <id>snapshots-repo</id>
+           <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+           <releases><enabled>false</enabled></releases>
+           <snapshots><enabled>true</enabled></snapshots>
+         </repository>
+       </repositories>
+     </profile>
+  </profiles>
+```
 Sample Usage:
 ===================================================================================================
 Option 1, POJO with annotations
@@ -151,8 +176,14 @@ Creating your own validator:
 
 Change History:
 ===================================================================================================
-Release 0.4.x (current master branch)
+Release 0.4.4 - Under development in 'master' branch
+----------------------------------------------------
+* Removed Ant build-related cruft.
+
+Release 0.4.3 - Released 08 Jan 2013
 -------------------------------------
+* Released to Maven Central repository.
+* Introduced Maven build.
 * Introduced the @FieldValidation annotation to utilize your own Validator at the field level.
 * Introduced message(), optional parameter to @RegexValidation annotation to facilitate describing
   the message to end-users instead of giving them the cryptic regex message.
