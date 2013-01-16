@@ -33,7 +33,7 @@ Stable:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.3</version>
+			<version>0.4.4</version>
 		</dependency>
 ```
 Development:
@@ -41,7 +41,7 @@ Development:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.4-SNAPSHOT</version>
+			<version>0.4.5-SNAPSHOT</version>
 		</dependency>
 ```
 Or download the jar directly from: 
@@ -176,9 +176,13 @@ Creating your own validator:
 
 Change History:
 ===================================================================================================
-Release 0.4.4 - Under development in 'master' branch
+Release 0.4.5 - Under development in 'master' branch
 ----------------------------------------------------
+
+Release 0.4.4 - Released 16 Jan 2013
+------------------------------------
 * Removed Ant build-related cruft.
+* Ensured Java 1.6 compatible artifact produced from build.
 
 Release 0.4.3 - Released 08 Jan 2013
 -------------------------------------
