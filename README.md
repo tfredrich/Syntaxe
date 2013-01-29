@@ -1,3 +1,5 @@
+[![Build Status](https://buildhive.cloudbees.com/job/RestExpress/job/Syntaxe/badge/icon)](https://buildhive.cloudbees.com/job/RestExpress/job/Syntaxe/)
+
 Syntaxe - Domain Model Validation
 =================================
 Syntaxe is an annotations-based, functional-style syntactic (and semantic) domain model validation
