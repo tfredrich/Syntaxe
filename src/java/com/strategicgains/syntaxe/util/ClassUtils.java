@@ -73,26 +73,22 @@ public class ClassUtils
 		return closure.getValues();
     }
 
-    
-    // SECTION: UTILITY - PRIVATE
+	public static void getAllDeclaredFields(Class<?> aClass, FieldClosure function)
+	{
+		for (Field field : aClass.getDeclaredFields())
+		{
+			function.perform(field);
+		}
 
-    private static void getAllDeclaredFields(Class<?> aClass, FieldClosure function)
-    {
-    	for (Field field : aClass.getDeclaredFields())
-    	{
-    		function.perform(field);
-    	}
-
-    	if (aClass.getSuperclass() != null)
+		if (aClass.getSuperclass() != null)
 		{
 			getAllDeclaredFields(aClass.getSuperclass(), function);
 		}
-    }
-    
+	}    
 
     // SECTION: INNER CLASSES
     
-    private interface FieldClosure
+    public interface FieldClosure
     {
     	void perform(Field argument);
     }
