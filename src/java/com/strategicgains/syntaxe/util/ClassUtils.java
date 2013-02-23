@@ -20,6 +20,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author toddf
@@ -57,7 +58,7 @@ public class ClassUtils
 	public static List<Field> getAllDeclaredFields(Class<?> aClass, int modifiers)
 	{
 		FieldListClosure closure = new ClassUtils.FieldListClosure(new ArrayList<Field>(), modifiers);
-		getAllDeclaredFields(aClass, closure);
+		computeDeclaredFields(aClass, closure);
 		return closure.getValues();
 	}
     
@@ -68,12 +69,12 @@ public class ClassUtils
 
     public static HashMap<String, Field> getAllDeclaredFieldsByName(Class<?> aClass, int modifiers)
     {
-		FieldHashMapClosure closure = new ClassUtils.FieldHashMapClosure(new HashMap<String, Field>(), modifiers);
-		getAllDeclaredFields(aClass, closure);
+		FieldMapClosure closure = new ClassUtils.FieldMapClosure(new HashMap<String, Field>(), modifiers);
+		computeDeclaredFields(aClass, closure);
 		return closure.getValues();
     }
 
-	public static void getAllDeclaredFields(Class<?> aClass, FieldClosure function)
+	public static <T> T computeDeclaredFields(Class<?> aClass, FieldClosure<T> function)
 	{
 		for (Field field : aClass.getDeclaredFields())
 		{
@@ -82,19 +83,22 @@ public class ClassUtils
 
 		if (aClass.getSuperclass() != null)
 		{
-			getAllDeclaredFields(aClass.getSuperclass(), function);
+			computeDeclaredFields(aClass.getSuperclass(), function);
 		}
+		
+		return function.getValues();
 	}    
 
     // SECTION: INNER CLASSES
     
-    public interface FieldClosure
+    public interface FieldClosure<T>
     {
     	void perform(Field argument);
+    	T getValues();
     }
     
     private static class FieldListClosure
-    implements FieldClosure
+    implements FieldClosure<List<Field>>
     {
     	private List<Field> values;
     	private int ignoredModifiers;
@@ -109,26 +113,26 @@ public class ClassUtils
         @Override
         public void perform(Field field)
         {
-
         	if ((field.getModifiers() & ignoredModifiers) == 0)
         	{
         		values.add(field);
         	}
         }
         
+        @Override
         public List<Field> getValues()
         {
         	return values;
         }
     }
     
-    private static class FieldHashMapClosure
-    implements FieldClosure
+    private static class FieldMapClosure
+    implements FieldClosure<Map<String, Field>>
     {
     	private HashMap<String, Field> values;
     	private int ignoredModifiers;
 
-    	public FieldHashMapClosure(HashMap<String, Field> values, int modifiers)
+    	public FieldMapClosure(HashMap<String, Field> values, int modifiers)
     	{
     		super();
     		this.values = values;
@@ -144,6 +148,7 @@ public class ClassUtils
         	}
         }
         
+        @Override
         public HashMap<String, Field> getValues()
         {
         	return values;
