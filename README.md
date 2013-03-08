@@ -178,8 +178,12 @@ Creating your own validator:
 
 Change History:
 ===================================================================================================
-Release 0.4.5 - Under development in 'master' branch
-----------------------------------------------------
+Release 0.4.6-SNAPSHOT - Under development in 'master' branch
+
+Release 0.4.5 - Released 8 Mar 2013
+-----------------------------------
+* Renamed getAllDeclaredFields(Class, FieldClosure) to computeDeclaredFields(), exposing it publicly
+  and making it return a generic type.
 
 Release 0.4.4 - Released 16 Jan 2013
 ------------------------------------
