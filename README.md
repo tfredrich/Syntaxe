@@ -35,7 +35,7 @@ Stable:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.4</version>
+			<version>0.4.5</version>
 		</dependency>
 ```
 Development:
@@ -43,7 +43,7 @@ Development:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.5-SNAPSHOT</version>
+			<version>0.4.6-SNAPSHOT</version>
 		</dependency>
 ```
 Or download the jar directly from: 
@@ -179,6 +179,8 @@ Creating your own validator:
 Change History:
 ===================================================================================================
 Release 0.4.6-SNAPSHOT - Under development in 'master' branch
+* Added @Required annotation to require non-null values in non-primitive properties. Also
+  checks array properties for non-null elements.
 
 Release 0.4.5 - Released 8 Mar 2013
 -----------------------------------
