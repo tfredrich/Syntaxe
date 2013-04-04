@@ -65,10 +65,11 @@ extends AnnotatedFieldValidator<StringValidation>
 		}
 	 
 	    if (values == null) return;
+	    int i = 0;
 	    
     	for (Object value : values)
     	{
-			validateString(name, (value == null ? null : String.valueOf(value)), errors);
+			validateString(name + "[" + i++ + "]", (value == null ? null : String.valueOf(value)), errors);
     	}
     }
 
