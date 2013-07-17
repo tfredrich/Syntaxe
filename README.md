@@ -35,7 +35,7 @@ Stable:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.5</version>
+			<version>0.4.6</version>
 		</dependency>
 ```
 Development:
@@ -43,7 +43,7 @@ Development:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.6-SNAPSHOT</version>
+			<version>0.4.7-SNAPSHOT</version>
 		</dependency>
 ```
 Or download the jar directly from: 
