@@ -6,7 +6,7 @@
 	<url>https://github.com/RestExpress/Syntaxe</url>
 	<groupId>com.strategicgains</groupId>
 	<artifactId>Syntaxe</artifactId>
-	<version>0.4.6-SNAPSHOT</version>
+	<version>0.4.6</version>
 	<packaging>jar</packaging>
 
 	<parent>
@@ -106,7 +106,7 @@
 		<url>git@github.com:RestExpress/Syntaxe.git</url>
 		<connection>scm:git:git@github.com:RestExpress/Syntaxe.git</connection>
 		<developerConnection>scm:git:git@github.com:RestExpress/Syntaxe.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>Syntaxe-0.4.6</tag>
   </scm>
 
 	<developers>
