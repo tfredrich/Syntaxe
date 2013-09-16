@@ -45,7 +45,7 @@ public class ObjectValidationTest
 	{
 		InnerTwo instance = new InnerTwo();
 		List<String> errors = ValidationEngine.validate(instance);
-		assertEquals(0, instance.getValidationCount());
+		assertEquals(1, instance.getValidationCount());
 		assertTrue(errors.isEmpty());
 	}
 

@@ -60,9 +60,15 @@ public class ValidationEngine
 
 		try
 		{
-			validateFields(object, errors);
-			validateObject(object, errors);
-//			validateIfValidatable(object);
+			if (isValidatable(object))
+			{
+				callValidate((Validatable) object);
+			}
+			else
+			{
+				validateFields(object, errors);
+				validateObject(object, errors);
+			}
 		}
 		catch (Exception e)
 		{
@@ -179,11 +185,13 @@ public class ValidationEngine
 		validator.perform(object, errors);
 	}
 
-//	private static void validateIfValidatable(Object object)
-//	{
-//		if (Validatable.class.isAssignableFrom(object.getClass()))
-//		{
-//			((Validatable) object).validate();
-//		}
-//	}
+	private static boolean isValidatable(Object object)
+	{
+		return (Validatable.class.isAssignableFrom(object.getClass()));
+	}
+	
+	private static void callValidate(Validatable object)
+	{
+		object.validate();
+	}
 }
