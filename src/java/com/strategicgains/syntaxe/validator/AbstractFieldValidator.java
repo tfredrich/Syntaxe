@@ -24,7 +24,7 @@ import com.strategicgains.syntaxe.ValidationException;
  * @since Mar 17, 2011
  */
 public abstract class AbstractFieldValidator
-implements Validator
+implements Validator<Object>
 {
 	private Field field;
 

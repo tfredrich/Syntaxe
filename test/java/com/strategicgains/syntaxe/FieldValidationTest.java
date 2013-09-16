@@ -76,7 +76,7 @@ public class FieldValidationTest
 	}
 
 	public static class TestFieldValidator
-	implements Validator
+	implements Validator<FieldValidationClass>
 	{
 		public TestFieldValidator()
 		{
@@ -84,7 +84,7 @@ public class FieldValidationTest
 		}
 
 		@Override
-        public void perform(Object instance, List<String> errors)
+        public void perform(FieldValidationClass instance, List<String> errors)
         {
 			FieldValidationClass fv = ((FieldValidationClass) instance);
 			errors.add(fv.field1);

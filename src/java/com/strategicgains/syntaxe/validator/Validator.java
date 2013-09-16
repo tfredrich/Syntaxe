@@ -21,7 +21,7 @@ import java.util.List;
  * @author toddf
  * @since Mar 16, 2011
  */
-public interface Validator
+public interface Validator<T>
 {
-	public void perform(Object instance, List<String> errors);
+	public void perform(T instance, List<String> errors);
 }
