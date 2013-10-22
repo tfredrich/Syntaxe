@@ -1,4 +1,6 @@
-[![Build Status](https://buildhive.cloudbees.com/job/RestExpress/job/Syntaxe/badge/icon)](https://buildhive.cloudbees.com/job/RestExpress/job/Syntaxe/)
+**Build Status** [![Build Status](https://buildhive.cloudbees.com/job/RestExpress/job/Syntaxe/badge/icon)](https://buildhive.cloudbees.com/job/RestExpress/job/Syntaxe/)
+
+**Waffle.io** [![Stories in Ready](https://badge.waffle.io/RestExpress/Syntaxe.png?label=ready)](https://waffle.io/RestExpress/Syntaxe)
 
 Syntaxe - Domain Model Validation
 =================================
