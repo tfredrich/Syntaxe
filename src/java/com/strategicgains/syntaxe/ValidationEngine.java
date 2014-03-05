@@ -219,6 +219,11 @@ public class ValidationEngine
 				XssEncoder provider = (XssEncoder) constructor.newInstance();
 				encoders.add(provider);
 			}
+			else if (a.annotationType().isAssignableFrom(EncodingProvider.class))
+			{
+				Class<? extends XssEncoder> vc = ((EncodingProvider) a).value();
+				encoders.add(vc.newInstance());
+			}
 		}
 
 		cachedEncodersByHashcode.put(field.hashCode(), encoders);

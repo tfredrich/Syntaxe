@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.strategicgains.syntaxe.ValidationEngine;
+import com.strategicgains.syntaxe.annotation.encoding.EncodingProvider;
 import com.strategicgains.syntaxe.annotation.encoding.HtmlEncoded;
 import com.strategicgains.syntaxe.annotation.encoding.JavascriptEncoded;
 import com.strategicgains.syntaxe.annotation.encoding.WebEncoded;
@@ -89,6 +90,16 @@ public class XssEncodingTest
 		assertEquals(object.getAll(), object.getWeb());
 	}
 
+	@Test
+	public void shouldUseMyEncoder()
+	{
+		Inner object = new Inner();
+		object.setMyString("somethinggoeshere");
+		ValidationEngine.validate(object);
+//		System.out.println(object.getMyString());
+		assertEquals("encoded=somethinggoeshere", object.getMyString());
+	}
+
 	private class Inner
 	{
 		@JavascriptEncoded
@@ -106,6 +117,9 @@ public class XssEncodingTest
 
 		@WebEncoded
 		private String web;
+		
+		@EncodingProvider(MyEncoder.class)
+		private String myString;
 
 		public String getJavascript()
 		{
@@ -155,6 +169,16 @@ public class XssEncodingTest
 		public void setWeb(String web)
 		{
 			this.web = web;
+		}
+
+		public String getMyString()
+		{
+			return myString;
+		}
+
+		public void setMyString(String myString)
+		{
+			this.myString = myString;
 		}
 	}
 }
