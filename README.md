@@ -51,6 +51,16 @@ Development:
 Or download the jar directly from: 
 http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22Syntaxe%22
 
+If you want to use the OWASP encoding annotations (available since 0.4.7-SNAPSHOT), also
+include the OWASP Encoder jar in your pom:
+```xml
+		<dependency>
+			<groupId>org.owasp.encoder</groupId>
+			<artifactId>encoder</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+```
+
 Note that to use the SNAPSHOT version, you must enable snapshots and a repository in your pom file as follows:
 ```xml
   <profiles>
@@ -180,7 +190,12 @@ Creating your own validator:
 
 Change History:
 ===================================================================================================
-Release 0.4.6-SNAPSHOT - Under development in 'master' branch
+Release 0.4.7-SNAPSHOT - Under development in 'master' branch
+* Added annotations to leverage the OWASP cross-site scripting encoding library: @JavascriptEncoded,
+  @XmlEncoded, @HtmlEncoded, @WebEncoded. To use, include the OWASP library in your pom.xml file (see Maven Usage, above).
+
+Release 0.4.6 - Released 17 Jul 2013
+------------------------------------
 * Added @Required annotation to require non-null values in non-primitive properties. Also
   checks array properties for non-null elements.
 

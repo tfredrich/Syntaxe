@@ -1,2 +1,9 @@
 The Syntaxe Project - The syntactic domain validation framework.
-Copyright 2010, Strategic Gains, Inc.
+Copyright (c) 2010 Strategic Gains, Inc.
+
+While not including it by default, this software includes references
+to the OWASP cross-site script encoding library:
+Copyright (c) 2012 Jeff Ichnowski
+New BSD License (http://opensource.org/licenses/BSD-3-Clause)
+https://www.owasp.org/index.php/OWASP_Java_Encoder_Project
+https://code.google.com/p/owasp-java-encoder/
