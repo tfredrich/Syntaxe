@@ -24,7 +24,7 @@ to leverage the OWASP XSS library on string fields (also, see Maven Usage below)
 * @XmlEncoded - performs XML encoding.
 * @HtmlEncoded - performs HTML encoding.
 * @WebEncoded - A meta-encoder that performs both Javascript and HTML encoding, in that order.
-* @EcodingProvider - a generic field annotation to leverage your own XssEncoder implementation.
+* @EncodingProvider - a generic field annotation to leverage your own XssEncoder implementation.
 
 Created to be simple, *Syntaxe* supports the following:
 * Annotation-based validations on fields and objects.
@@ -200,7 +200,7 @@ Change History:
 Release 0.4.7-SNAPSHOT - Under development in 'master' branch
 * Added annotations to leverage the OWASP cross-site scripting encoding library: @JavascriptEncoded,
   @XmlEncoded, @HtmlEncoded, @WebEncoded. To use, include the OWASP library in your pom.xml file (see Maven Usage, above).
-* Enhanced @EcodingProvider to be able to use it directly on a field and leverage your own XssEncoder implementation.
+* Enhanced @EncodingProvider to be able to use it directly on a field and leverage your own XssEncoder implementation.
 
 Release 0.4.6 - Released 17 Jul 2013
 ------------------------------------
