@@ -193,6 +193,7 @@ Change History:
 Release 0.4.7-SNAPSHOT - Under development in 'master' branch
 * Added annotations to leverage the OWASP cross-site scripting encoding library: @JavascriptEncoded,
   @XmlEncoded, @HtmlEncoded, @WebEncoded. To use, include the OWASP library in your pom.xml file (see Maven Usage, above).
+* Enhanced @EcodingProvider to be able to use it directly on a field and leverage your own XssEncoder implementation.
 
 Release 0.4.6 - Released 17 Jul 2013
 ------------------------------------
