@@ -40,7 +40,7 @@ implements Validatable
 			throw new ValidationException(errors);
 		}
 	}
-	
+
 	/**
 	 * Sub-classes can insert additional validations here by overriding.
 	 * 

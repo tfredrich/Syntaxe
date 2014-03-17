@@ -15,6 +15,8 @@
  */
 package com.strategicgains.syntaxe;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,6 +27,7 @@ public class ValidationException
 extends RuntimeException
 {
     private static final long serialVersionUID = 2687232338572123535L;
+    private List<String> errors = new ArrayList<String>();
 
 	public ValidationException()
 	{
@@ -59,11 +62,18 @@ extends RuntimeException
 	public ValidationException(List<String> errors)
 	{
 		this(joinErrors(errors));
+		this.errors = errors;
 	}
 
 	public ValidationException(List<String> errors, Throwable cause)
 	{
 		this(joinErrors(errors), cause);
+		this.errors = errors;
+	}
+
+	public List<String> getErrors()
+	{
+		return Collections.unmodifiableList(errors);
 	}
 	
 	protected static String joinErrors(List<String> errors)

@@ -21,7 +21,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.strategicgains.syntaxe.annotation.FieldValidation;
@@ -43,6 +46,7 @@ public class ValidationEngine
 	private static final ConcurrentHashMap<Integer, List<Validator>> cachedValidatorsByHashcode = new ConcurrentHashMap<Integer, List<Validator>>();
 	private static final ConcurrentHashMap<Class<?>, Validator> cachedObjectValidatorsByClass = new ConcurrentHashMap<Class<?>, Validator>();
 	private static final ConcurrentHashMap<Integer, List<XssEncoder>> cachedEncodersByHashcode = new ConcurrentHashMap<Integer, List<XssEncoder>>();
+	private static final ThreadLocal<Set<Object>> tls = new ThreadLocal<Set<Object>>();
 
 	private ValidationEngine()
 	{
@@ -62,23 +66,35 @@ public class ValidationEngine
 	public static List<String> validate(Object object)
 	{
 		List<String> errors = new ArrayList<String>();
+
+		if (visit(object)) return errors;
+
 		encode(object);
 
 		try
 		{
 			if (isValidatable(object))
 			{
-				callValidate((Validatable) object);
+				try
+				{
+					callValidate((Validatable) object);
+				}
+				catch (ValidationException ve)
+				{
+					errors.addAll(ve.getErrors());
+				}
 			}
-			else
-			{
-				validateFields(object, errors);
-				validateObject(object, errors);
-			}
+
+			validateFields(object, errors);
+			validateObject(object, errors);
 		}
 		catch (Exception e)
 		{
 			errors.add("Exception while validating: " + e.getMessage());
+		}
+		finally
+		{
+			clearVisited();
 		}
 
 		return errors;
@@ -269,5 +285,49 @@ public class ValidationEngine
 	private static void callValidate(Validatable object)
 	{
 		object.validate();
+	}
+
+	/**
+	 * Returns true if the object has been visited by the validation engine.
+	 * Otherwise, marks the object as visited and returns false.
+	 * 
+	 * @param object an object to visit
+	 * @return true if the object has already been visited. Otherwise, false.
+	 */
+	private static boolean visit(Object object)
+	{
+		Set<Object> s = tls.get();
+
+		if (s != null)
+		{
+			if (s.contains(object)) return true;
+		}
+
+		markVisited(object);
+		return false;
+	}
+
+	private static void markVisited(Object object)
+	{
+		Set<Object> s = tls.get();
+		
+		if (s == null)
+		{
+			s = new HashSet<Object>();
+			tls.set(s);
+		}
+
+		s.add(object);
+	}
+
+	private static void clearVisited()
+	{
+		Set<Object> s = tls.get();
+
+		if (s != null)
+		{
+			s.clear();
+			tls.remove();
+		}
 	}
 }
