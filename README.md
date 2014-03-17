@@ -15,6 +15,7 @@ Supported annotations are:
 * @StringValidation - enforces 'required-ness', min/max length.
 * @RegexValidation - enforces the string field to comply with a regular expression.
 * @IntegerValidation - enforces min/max value.
+* @LongValidation - enforced min/max value.
 * @FieldValidation - utilize your own Validator implementation for the annotated field/property.
 * @ObjectValidation - utilize your own Validator implementation for the annotated class.
 
