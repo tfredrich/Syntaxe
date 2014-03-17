@@ -76,4 +76,20 @@ public class Validations
 			errors.add(String.format(GREATER_THAN_OR_EQUAL_ERROR, name, min));
 		}
 	}
+
+	public static void lessThanOrEqual(String name, long actual, long max, List<String> errors)
+	{
+		if (actual > max)
+		{
+			errors.add(String.format(LESS_THAN_OR_EQUAL_ERROR, name, max));
+		}
+	}
+
+	public static void greaterThanOrEqual(String name, long actual, long min, List<String> errors)
+	{
+		if (actual < min)
+		{
+			errors.add(String.format(GREATER_THAN_OR_EQUAL_ERROR, name, min));
+		}
+	}
 }
