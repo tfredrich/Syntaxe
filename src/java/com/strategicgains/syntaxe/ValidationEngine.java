@@ -21,7 +21,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +45,7 @@ public class ValidationEngine
 	private static final ConcurrentHashMap<Integer, List<Validator>> cachedValidatorsByHashcode = new ConcurrentHashMap<Integer, List<Validator>>();
 	private static final ConcurrentHashMap<Class<?>, Validator> cachedObjectValidatorsByClass = new ConcurrentHashMap<Class<?>, Validator>();
 	private static final ConcurrentHashMap<Integer, List<XssEncoder>> cachedEncodersByHashcode = new ConcurrentHashMap<Integer, List<XssEncoder>>();
-	private static final ThreadLocal<Set<Object>> tls = new ThreadLocal<Set<Object>>();
+	private static final ThreadLocal<Set<Object>> visitedObjects = new ThreadLocal<Set<Object>>();
 
 	private ValidationEngine()
 	{
@@ -59,6 +58,13 @@ public class ValidationEngine
 	 * occurred.
 	 * <p/>
 	 * Also calls encode() to leverage any XSS encoding annotations.
+	 * <p/>
+	 * Note: this method calls Validatable.validate() if the
+	 * instance being validated implements the Validatable interface.
+	 * However, if Validatable.validate() turns around and calls
+	 * the ValidationEngine (with the same object), you will get
+	 * inconsistent results--with more-than the expected number of
+	 * error messages.
 	 * 
 	 * @param object
 	 * @return a List of error message strings. Never null.
@@ -103,6 +109,15 @@ public class ValidationEngine
 	/**
 	 * Validates the object, throwing a ValidationException
 	 * if there were errors.
+	 * <p/>
+	 * Also calls encode() to leverage any XSS encoding annotations.
+	 * <p/>
+	 * Note: that this method calls Validatable.validate() if the
+	 * instance being validated implements the Validatable interface.
+	 * However, if Validatable.validate() turns around and calls
+	 * the ValidationEngine (on the same object), you will get
+	 * inconsistent results--with more-than the expected number of
+	 * error messages.
 	 * 
 	 * @param object
 	 * @throws ValidationException containing the error messages if a validation error occurs.
@@ -296,7 +311,7 @@ public class ValidationEngine
 	 */
 	private static boolean visit(Object object)
 	{
-		Set<Object> s = tls.get();
+		Set<Object> s = visitedObjects.get();
 
 		if (s != null)
 		{
@@ -309,12 +324,12 @@ public class ValidationEngine
 
 	private static void markVisited(Object object)
 	{
-		Set<Object> s = tls.get();
+		Set<Object> s = visitedObjects.get();
 		
 		if (s == null)
 		{
 			s = new HashSet<Object>();
-			tls.set(s);
+			visitedObjects.set(s);
 		}
 
 		s.add(object);
@@ -322,12 +337,12 @@ public class ValidationEngine
 
 	private static void clearVisited()
 	{
-		Set<Object> s = tls.get();
+		Set<Object> s = visitedObjects.get();
 
 		if (s != null)
 		{
 			s.clear();
-			tls.remove();
+			visitedObjects.remove();
 		}
 	}
 }

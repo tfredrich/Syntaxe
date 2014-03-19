@@ -203,8 +203,9 @@ Release 0.4.7-SNAPSHOT - Under development in 'master' branch
   @XmlEncoded, @HtmlEncoded, @WebEncoded. To use, include the OWASP library in your pom.xml file (see Maven Usage, above).
 * Enhanced @EncodingProvider to be able to use it directly on a field and leverage your own XssEncoder implementation.
 * Added @LongValidation per issue #2.
-* Fixed stack overflow issue when ValidationEngine.validate() calls Validatable.validate() and
-  Validatable.validate() calls ValidationEngine.validate() again (e.g. recursive validation).
+* Fixed stack overflow issue when Validatable.validate() calls ValidationEngine.validate()
+  for the same object (e.g. circular validation).  Circular validation will produce more-than
+  the expected number of errors, but no longer cause a stack trace.
 
 Release 0.4.6 - Released 17 Jul 2013
 ------------------------------------
