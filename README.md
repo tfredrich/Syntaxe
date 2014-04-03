@@ -45,7 +45,7 @@ Stable:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.6</version>
+			<version>0.4.7</version>
 		</dependency>
 ```
 Development:
@@ -53,7 +53,7 @@ Development:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.7-SNAPSHOT</version>
+			<version>0.4.8-SNAPSHOT</version>
 		</dependency>
 ```
 Or download the jar directly from: 
@@ -198,7 +198,11 @@ Creating your own validator:
 
 Change History:
 ===================================================================================================
-Release 0.4.7-SNAPSHOT - Under development in 'master' branch
+0.4.8-SNAPSHOT - Under development in 'master' branch
+-----------------------------------------------------
+
+Release 0.4.7 - Released 3 Apr 2014
+-----------------------------------
 * Added annotations to leverage the OWASP cross-site scripting encoding library: @JavascriptEncoded,
   @XmlEncoded, @HtmlEncoded, @WebEncoded. To use, include the OWASP library in your pom.xml file (see Maven Usage, above).
 * Enhanced @EncodingProvider to be able to use it directly on a field and leverage your own XssEncoder implementation.
