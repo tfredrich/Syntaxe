@@ -69,7 +69,46 @@ public class LongValidationTest
 		List<String> errors = ValidationEngine.validate(object);
 		assertTrue(errors.isEmpty());
 	}
-	
+
+	@Test
+	public void shouldFailRequiredness()
+	{
+		object.setValidatedLong(7);
+		object.setNonNullableLong(null);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(1, errors.size());
+		assertTrue(errors.get(0).contains("nonNullableLong"));
+	}
+
+	@Test
+	public void shouldFailNonNullOutOfBandValue()
+	{
+		object.setValidatedLong(7);
+		object.setNonNullableLong(25L);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(1, errors.size());
+		assertTrue(errors.get(0).contains("nonNullableLong"));
+	}
+
+	@Test
+	public void shouldPassValidateNonNull()
+	{
+		object.setValidatedLong(7);
+		object.setNullableLong(5L);
+		List<String> errors = ValidationEngine.validate(object);
+		assertTrue(errors.isEmpty());
+	}
+
+	@Test
+	public void shouldFailValidateNonNull()
+	{
+		object.setValidatedLong(7);
+		object.setNullableLong(7L);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(1, errors.size());
+		assertTrue(errors.get(0).contains("nullableLong"));
+	}
+
 	@SuppressWarnings("unused")
 	private class Inner
 	{
@@ -80,6 +119,12 @@ public class LongValidationTest
 
 		@LongValidation(min=-1, max=1)
 		private long longField;
+
+		@LongValidation(min=-1, max=5, isNullable=true)
+		private Long nullableLong;
+
+		@LongValidation(min=-1, max=5)
+		private Long nonNullableLong = 1L;
 
 		public void setValidatedLong(long value)
         {
@@ -95,5 +140,15 @@ public class LongValidationTest
         {
         	this.longField = value;
         }
+
+		public void setNullableLong(Long value)
+		{
+			this.nullableLong = value;
+		}
+
+		public void setNonNullableLong(Long value)
+		{
+			this.nonNullableLong = value;
+		}
 	}
 }

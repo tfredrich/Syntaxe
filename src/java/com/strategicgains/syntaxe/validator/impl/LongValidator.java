@@ -18,7 +18,6 @@ package com.strategicgains.syntaxe.validator.impl;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import com.strategicgains.syntaxe.annotation.IntegerValidation;
 import com.strategicgains.syntaxe.annotation.LongValidation;
 import com.strategicgains.syntaxe.util.Validations;
 import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
@@ -44,7 +43,17 @@ extends AnnotatedFieldValidator<LongValidation>
     {
 		String name = determineName();
 		Object value = getValue(instance);
-		
+
+		if (value == null)
+		{
+			if (!getAnnotation().isNullable())
+			{
+				Validations.require(name, null, errors);
+			}
+
+			return;
+		}
+
 		if (isArray())
 		{
 			// TODO: validate the elements in the array.

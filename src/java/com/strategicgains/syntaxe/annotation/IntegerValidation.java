@@ -35,4 +35,5 @@ public @interface IntegerValidation
 	String name() default "";
 	int min() default Integer.MIN_VALUE;
 	int max() default Integer.MAX_VALUE;
+	boolean isNullable() default false;
 }

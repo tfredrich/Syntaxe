@@ -200,6 +200,7 @@ Change History:
 ===================================================================================================
 0.4.8-SNAPSHOT - Under development in 'master' branch
 -----------------------------------------------------
+* Enabled @IntegerValidation & @LongValidation on non-primitive Integer & Long types, respectively. Adding an isNullable property of the annotation.
 
 Release 0.4.7 - Released 3 Apr 2014
 -----------------------------------

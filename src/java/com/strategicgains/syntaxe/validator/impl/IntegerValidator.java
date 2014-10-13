@@ -43,7 +43,17 @@ extends AnnotatedFieldValidator<IntegerValidation>
     {
 		String name = determineName();
 		Object value = getValue(instance);
-		
+
+		if (value == null)
+		{
+			if (!getAnnotation().isNullable())
+			{
+				Validations.require(name, null, errors);
+			}
+
+			return;
+		}
+
 		if (isArray())
 		{
 			// TODO: validate the elements in the array.

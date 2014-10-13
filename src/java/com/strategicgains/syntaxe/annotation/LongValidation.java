@@ -35,4 +35,5 @@ public @interface LongValidation
 	String name() default "";
 	long min() default Long.MIN_VALUE;
 	long max() default Long.MAX_VALUE;
+	boolean isNullable() default false;
 }

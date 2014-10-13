@@ -69,6 +69,45 @@ public class IntegerValidationTest
 		List<String> errors = ValidationEngine.validate(object);
 		assertTrue(errors.isEmpty());
 	}
+
+	@Test
+	public void shouldFailRequiredness()
+	{
+		object.setValidatedInt(7);
+		object.setNonNullableInteger(null);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(1, errors.size());
+		assertTrue(errors.get(0).contains("nonNullableInteger"));
+	}
+
+	@Test
+	public void shouldFailNonNullOutOfBandValue()
+	{
+		object.setValidatedInt(7);
+		object.setNonNullableInteger(25);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(1, errors.size());
+		assertTrue(errors.get(0).contains("nonNullableInteger"));
+	}
+
+	@Test
+	public void shouldPassValidateNonNull()
+	{
+		object.setValidatedInt(7);
+		object.setNullableInteger(5);
+		List<String> errors = ValidationEngine.validate(object);
+		assertTrue(errors.isEmpty());
+	}
+
+	@Test
+	public void shouldFailValidateNonNull()
+	{
+		object.setValidatedInt(7);
+		object.setNullableInteger(7);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(1, errors.size());
+		assertTrue(errors.get(0).contains("nullableInteger"));
+	}
 	
 	@SuppressWarnings("unused")
 	private class Inner
@@ -80,6 +119,12 @@ public class IntegerValidationTest
 
 		@IntegerValidation(min=-1, max=1)
 		private int intField;
+
+		@IntegerValidation(min=0, max=5, isNullable=true)
+		private Integer nullableInteger;
+
+		@IntegerValidation(min=0, max=5)
+		private Integer nonNullableInteger = 1;
 
 		public void setValidatedInt(int validatedInt)
         {
@@ -95,5 +140,15 @@ public class IntegerValidationTest
         {
         	this.intField = intField;
         }
+
+		public void setNullableInteger(Integer value)
+		{
+			this.nullableInteger = value;
+		}
+
+		public void setNonNullableInteger(Integer value)
+		{
+			this.nonNullableInteger = value;
+		}
 	}
 }
