@@ -16,6 +16,7 @@
 package com.strategicgains.syntaxe.validator.impl;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,11 +46,15 @@ extends AnnotatedFieldValidator<RegexValidation>
 		Object value = getValue(instance);
 		String name = determineFieldName();
 		
-		if (isArray())
+		if(isCollection())
 		{
-			// TODO: validate the elements in the array.
-			throw new UnsupportedOperationException("Validating an array of REGEX strings is not currently supported");
+			validateCollection(name, (value == null ? null : ((Collection<Object>) value)), errors);
 		}
+		else if (isArray())
+		{
+			validateArray(name, (value == null ? null : ((Object[]) value)), errors);
+		}
+
 		else
 		{
 			validate(name, value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);
@@ -60,6 +65,28 @@ extends AnnotatedFieldValidator<RegexValidation>
 	{
 		return (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
 	}
+	
+	public void validateArray(String name, Object[] values, List<String> errors)
+    {
+	    if (values == null) return;
+	    int i = 0;
+	    
+    	for (Object value : values)
+    	{
+    		validate(name + "[" + i++ + "]", value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);
+    	}
+    }
+	
+	public void validateCollection(String name, Collection<Object> values, List<String> errors)
+    {
+	    if (values == null) return;
+	    
+    	for (Object value : values)
+    	{
+    		validate(name, value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);
+    	}
+    }
+
 
 	public static void validate(String name, Object value, boolean isNullable, Pattern regex, String message, List<String> errors)
 	{

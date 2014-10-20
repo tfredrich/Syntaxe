@@ -16,6 +16,7 @@
 package com.strategicgains.syntaxe.validator;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 
 import com.strategicgains.syntaxe.ValidationException;
 
@@ -43,6 +44,11 @@ implements Validator<Object>
 	public boolean isArray()
 	{
 		return field.getType().isArray();
+	}
+	
+	public boolean isCollection()
+	{
+		return Collection.class.isAssignableFrom(field.getType());
 	}
 
 	public Object getValue(Object object) 
