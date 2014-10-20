@@ -40,6 +40,7 @@ extends AnnotatedFieldValidator<RegexValidation>
 		regex = Pattern.compile(annotation.pattern());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void perform(Object instance, List<String> errors)
 	{
