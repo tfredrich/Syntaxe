@@ -45,7 +45,7 @@ Stable:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.7</version>
+			<version>0.4.8</version>
 		</dependency>
 ```
 Development:
@@ -53,7 +53,7 @@ Development:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.8-SNAPSHOT</version>
+			<version>0.4.9-SNAPSHOT</version>
 		</dependency>
 ```
 Or download the jar directly from: 
@@ -198,8 +198,12 @@ Creating your own validator:
 
 Change History:
 ===================================================================================================
-0.4.8-SNAPSHOT - Under development in 'master' branch
+0.4.9-SNAPSHOT - Under development in 'master' branch
 -----------------------------------------------------
+* Implemented validation for arrays and collections in all ...Validator sub-classes. Moved validateCollection() and validateArray() to AnnotatedFieldValidator.
+
+0.4.8 - Released 24 Oct 2014
+----------------------------
 * Enabled @IntegerValidation & @LongValidation on non-primitive Integer & Long types, respectively. Adding an isNullable property of the annotation.
 * RegexValidator changed to support validation involving Collections and Arrays.
 
