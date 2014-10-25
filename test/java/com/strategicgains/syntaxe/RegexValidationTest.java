@@ -17,6 +17,7 @@ package com.strategicgains.syntaxe;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Test;
@@ -34,6 +35,15 @@ public class RegexValidationTest
 
 	@Test
 	public void shouldFailPattern()
+	{
+		object.setNotNullString("abc");
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(1, errors.size());
+		assertEquals("not-null-string does not match the regular expression pattern: [a-z]{2}", errors.get(0));
+	}
+	
+	@Test
+	public void shouldFailCollectionPattern()
 	{
 		object.setNotNullString("abc");
 		List<String> errors = ValidationEngine.validate(object);
@@ -76,6 +86,34 @@ public class RegexValidationTest
 		List<String> errors = ValidationEngine.validate(object);
 		assertEquals(0, errors.size());
 	}
+	
+	@Test
+	public void shouldPassNotNullCollection()
+	{
+		object.setNotNullString("ab");
+		object.setNullableString(null);
+		HashSet<String> collection = new HashSet<String>();
+		collection.add("ab");
+		collection.add("cd");
+		object.setNotNullCollection(collection);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(0, errors.size());
+	}
+	
+	@Test
+	public void shouldPassNotNullStringArray()
+	{
+		object.setNotNullString("ab");
+		object.setNullableString(null);
+		HashSet<String> collection = new HashSet<String>();
+		collection.add("ab");
+		collection.add("cd");
+		object.setNotNullCollection(collection);
+		String[] stringArray = new String[] {"ef", "gh"}; 
+		object.setNotNullStringArray(stringArray);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(0, errors.size());
+	}
 
 	private class Inner
 	{
@@ -84,6 +122,12 @@ public class RegexValidationTest
 		
 		@RegexValidation(name="nullable-string", nullable=true, pattern="[a-z]{2}", message = "must be a two-character, lower-case string")
 		private String nullableString;
+		
+		@RegexValidation(name="not-null-Collection", nullable=true, pattern="[a-z]{2}")
+		private HashSet<String> notNullCollection = new HashSet<String>();
+		
+		@RegexValidation(name = "not-null-String-Array", nullable = true, pattern="[a-z]{2}")
+		public String[] stringArray = null;	
 
 		public void setNotNullString(String notNullString)
         {
@@ -94,5 +138,16 @@ public class RegexValidationTest
         {
         	this.nullableString = nullableString;
         }
+		
+		public void setNotNullCollection(HashSet<String> notNullCollection)
+        {
+        	this.notNullCollection = notNullCollection;
+        }
+		
+		public void setNotNullStringArray(String[] stringArray)
+        {
+        	this.stringArray = stringArray;
+        }
+
 	}
 }
