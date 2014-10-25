@@ -16,6 +16,7 @@
 package com.strategicgains.syntaxe.validator.impl;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 
 import com.strategicgains.syntaxe.annotation.IntegerValidation;
@@ -56,10 +57,20 @@ extends AnnotatedFieldValidator<IntegerValidation>
 
 		if (isArray())
 		{
-			// TODO: validate the elements in the array.
-			throw new UnsupportedOperationException("Validating an array of Integer instances is not currently supported");
+			validateArray(name, !getAnnotation().isNullable(), (Object[]) value, errors);
 		}
+		else if (isCollection())
+		{
+			validateCollection(name, !getAnnotation().isNullable(), (Collection<Object>) value, errors);
+		}
+		else
+		{
+			validate(name, value, errors);
+		}
+    }
 
+	protected void validate(String name, Object value, List<String> errors)
+	{
 		if (getAnnotation().min() != Integer.MIN_VALUE)
 		{
 			int intValue = ((Integer) value).intValue();
@@ -71,7 +82,7 @@ extends AnnotatedFieldValidator<IntegerValidation>
 			int intValue = ((Integer) value).intValue();
 			Validations.lessThanOrEqual(name, intValue, getAnnotation().max(), errors);
 		}
-    }
+	}
 
 	/**
      * @return

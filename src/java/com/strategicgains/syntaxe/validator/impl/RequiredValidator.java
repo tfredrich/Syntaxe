@@ -16,6 +16,7 @@
 package com.strategicgains.syntaxe.validator.impl;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 
 import com.strategicgains.syntaxe.annotation.Required;
@@ -47,9 +48,19 @@ extends AnnotatedFieldValidator<Required>
 		String name = determineName();
 		Object value = getValue(instance);
 
+		if (value == null)
+    	{
+    		errors.add(name + " is required");
+    		return;
+    	}
+
+		if (isCollection())
+		{
+			validateCollection(name, true, (value == null ? null : ((Collection<Object>) value)), errors);
+		}
 		if (isArray())
 		{
-			validateArray(name, (value == null ? null : ((Object[]) value)), errors);
+			validateArray(name, true, (value == null ? null : ((Object[]) value)), errors);
 		}
 		else
 		{
@@ -57,20 +68,9 @@ extends AnnotatedFieldValidator<Required>
 		}
 	}
 
-	public void validateArray(String name, Object[] values, List<String> errors)
+	protected void validate(String name, Object value, List<String> errors)
 	{
-		if (values == null || values.length == 0)
-		{
-			Validations.require(name, null, errors);
-		}
-
-		if (values == null) return;
-		int i = 0;
-
-		for (Object value : values)
-		{
-			Validations.require(name + "[" + i++ + "]", (value == null ? null : String.valueOf(value)), errors);
-		}
+		Validations.require(name, (value == null ? null : String.valueOf(value)), errors);
 	}
 
 	protected String determineName()

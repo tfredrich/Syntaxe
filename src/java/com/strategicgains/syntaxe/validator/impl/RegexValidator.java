@@ -46,50 +46,36 @@ extends AnnotatedFieldValidator<RegexValidation>
 	{
 		Object value = getValue(instance);
 		String name = determineFieldName();
+
+		if (!getAnnotation().nullable())
+		{
+	    	if (value == null)
+	    	{
+	    		errors.add(name + " is required");
+	    		return;
+	    	}
+		}
 		
 		if(isCollection())
 		{
-			validateCollection(name, (value == null ? null : ((Collection<Object>) value)), errors);
+			validateCollection(name, !getAnnotation().nullable(), (value == null ? null : ((Collection<Object>) value)), errors);
 		}
 		else if (isArray())
 		{
-			validateArray(name, (value == null ? null : ((Object[]) value)), errors);
+			validateArray(name, !getAnnotation().nullable(), (value == null ? null : ((Object[]) value)), errors);
 		}
-
 		else
 		{
-			validate(name, value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);
+			validateRegex(name, value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);
 		}
 	}
 
-	protected String determineFieldName()
+	protected void validate(String name, Object value, List<String> errors)
 	{
-		return (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
+		validateRegex(name, value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);
 	}
-	
-	public void validateArray(String name, Object[] values, List<String> errors)
-    {
-	    if (values == null) return;
-	    int i = 0;
-	    
-    	for (Object value : values)
-    	{
-    		validate(name + "[" + i++ + "]", value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);
-    	}
-    }
-	
-	public void validateCollection(String name, Collection<Object> values, List<String> errors)
-    {
-	    if (values == null) return;
-	    
-    	for (Object value : values)
-    	{
-    		validate(name, value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);
-    	}
-    }
 
-
-	public static void validate(String name, Object value, boolean isNullable, Pattern regex, String message, List<String> errors)
+	private void validateRegex(String name, Object value, boolean isNullable, Pattern regex, String message, List<String> errors)
 	{
 		if (value != null && !(value instanceof String))
 		{
@@ -120,5 +106,10 @@ extends AnnotatedFieldValidator<RegexValidation>
 				}
 			}
 		}
+	}
+
+	protected String determineFieldName()
+	{
+		return (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
 	}
 }

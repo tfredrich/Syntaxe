@@ -16,6 +16,7 @@
 package com.strategicgains.syntaxe.validator.impl;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 
 import com.strategicgains.syntaxe.annotation.LongValidation;
@@ -56,10 +57,20 @@ extends AnnotatedFieldValidator<LongValidation>
 
 		if (isArray())
 		{
-			// TODO: validate the elements in the array.
-			throw new UnsupportedOperationException("Validating an array of Long instances is not currently supported");
+			validateArray(name, !getAnnotation().isNullable(), (Object[]) value, errors);
 		}
+		if (isCollection())
+		{
+			validateCollection(name, !getAnnotation().isNullable(), (Collection<Object>) value, errors);
+		}
+		else
+		{
+			validate(name, value, errors);
+		}
+    }
 
+	protected void validate(String name, Object value, List<String> errors)
+	{
 		if (getAnnotation().min() != Long.MIN_VALUE)
 		{
 			long actual = ((Long) value).longValue();
@@ -71,7 +82,7 @@ extends AnnotatedFieldValidator<LongValidation>
 			long actual = ((Long) value).longValue();
 			Validations.lessThanOrEqual(name, actual, getAnnotation().max(), errors);
 		}
-    }
+	}
 
 	/**
      * @return

@@ -16,6 +16,7 @@
 package com.strategicgains.syntaxe.validator.impl;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 
 import com.strategicgains.syntaxe.annotation.StringValidation;
@@ -43,10 +44,23 @@ extends AnnotatedFieldValidator<StringValidation>
     {
 		String name = determineName();
 		Object value = getValue(instance);
-		
-		if (isArray())
+
+		if (getAnnotation().required())
 		{
-			validateArray(name, (value == null ? null : ((Object[]) value)), errors);
+	    	if (value == null)
+	    	{
+	    		errors.add(name + " is required");
+	    		return;
+	    	}
+		}
+
+		if(isCollection())
+		{
+			validateCollection(name, getAnnotation().required(), (value == null ? null : ((Collection<Object>) value)), errors);
+		}
+		else if (isArray())
+		{
+			validateArray(name, getAnnotation().required(), (value == null ? null : ((Object[]) value)), errors);
 		}
 		else
 		{
@@ -54,24 +68,10 @@ extends AnnotatedFieldValidator<StringValidation>
 		}
     }
 
-	public void validateArray(String name, Object[] values, List<String> errors)
-    {
-	    if (getAnnotation().required())
-		{
-	    	if (values == null || values.length == 0)
-	    	{
-	    		errors.add(name + " is required");
-	    	}
-		}
-	 
-	    if (values == null) return;
-	    int i = 0;
-	    
-    	for (Object value : values)
-    	{
-			validateString(name + "[" + i++ + "]", (value == null ? null : String.valueOf(value)), errors);
-    	}
-    }
+	protected void validate(String name, Object value, List<String> errors)
+	{
+		validateString(name, (value == null ? null : String.valueOf(value)), errors);
+	}
 
 	private void validateString(String name, String stringValue, List<String> errors)
     {

@@ -17,6 +17,8 @@ package com.strategicgains.syntaxe.validator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author toddf
@@ -37,4 +39,40 @@ extends AbstractFieldValidator
 	{
 		return annotation;
 	}
+
+	protected void validateCollection(String name, boolean isRequired, Collection<Object> values, List<String> errors)
+	{
+		if (values == null) return;
+
+		if (isRequired && values.isEmpty())
+		{
+			errors.add(name + " is required");
+		}
+
+		int i = 0;
+
+		for (Object value : values)
+		{
+			validate(name + "[" + i++ + "]", value, errors);
+		}
+	}
+
+	protected void validateArray(String name, boolean isRequired, Object[] values, List<String> errors)
+    {
+	    if (values == null) return;
+
+		if (isRequired && values.length == 0)
+		{
+			errors.add(name + " is required");
+		}
+
+		int i = 0;
+	    
+    	for (Object value : values)
+    	{
+			validate(name + "[" + i++ + "]", value, errors);
+    	}
+    }
+
+	protected abstract void validate(String name, Object value, List<String> errors);
 }
