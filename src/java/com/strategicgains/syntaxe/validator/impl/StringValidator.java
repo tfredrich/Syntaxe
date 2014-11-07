@@ -68,6 +68,7 @@ extends AnnotatedFieldValidator<StringValidation>
 		}
     }
 
+    @Override
 	protected void validate(String name, Object value, List<String> errors)
 	{
 		validateString(name, (value == null ? null : String.valueOf(value)), errors);

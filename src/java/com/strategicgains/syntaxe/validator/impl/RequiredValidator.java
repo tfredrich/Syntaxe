@@ -68,6 +68,7 @@ extends AnnotatedFieldValidator<Required>
 		}
 	}
 
+    @Override
 	protected void validate(String name, Object value, List<String> errors)
 	{
 		Validations.require(name, (value == null ? null : String.valueOf(value)), errors);
