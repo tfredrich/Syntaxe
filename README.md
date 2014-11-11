@@ -7,7 +7,7 @@ Syntaxe - Domain Model Validation
 Syntaxe is an annotations-based, functional-style syntactic (and semantic) domain model validation
 framework for Java.
 
-Simply annotate fields in your domain model and invoke the ValidationEngine.validat() method to
+Simply annotate fields in your domain model and invoke the ValidationEngine.validate() method to
 accomplish syntactic validation. Multiple annotations per field can be used to enforce multiple
 validations, if necessary.
 
@@ -100,7 +100,7 @@ public class MyValidatableClass
 	@StringValidation(name="ID", required=true)
 	private String id;
 	
-	@StringValidation(name="Name", required=true, maxLenth=25)
+	@StringValidation(name="Name", required=true, maxLength=25)
 	private String name;
 
 	@IntegerValidation(name="Count", min=3, max=21)
@@ -129,7 +129,7 @@ extends AbstractValidatable
 	@StringValidation(name="ID", required=true)
 	private String id;
 	
-	@StringValidation(name="Name", required=true, minLength=5, maxLenth=25)
+	@StringValidation(name="Name", required=true, minLength=5, maxLength=25)
 	private String name;
 
 	@IntegerValidation(name="Count", min=3, max=21)
@@ -196,11 +196,45 @@ Creating your own validator:
 4. See the com.strategicgains.syntaxe.validators.basic or com.strategicgains.syntaxe.validators.regex for examples.
 
 
+Validating object graphs:
+=========================
+
+To validate a graph of objects originating from a root object, annotate the fields with @FieldValidation.
+Syntaxe will process the fields of the child object, list of objects, or array of objects as described
+in the options above. 
+
+```java
+public class RootPojo
+{
+  @FieldValidation(DefaultObjectValidator.class)
+  private ChildPojo childPojo;
+
+  @FieldValidation(DefaultObjectValidator.class)
+  private List<ChildPojo> childPojoList;
+
+  @FieldValidation(DefaultObjectValidator.class)
+  private ChildPojo[] childPojoArray;
+
+  ...
+}
+
+public class ChildPojo
+{
+  // cyclic graphs are supported, previously visited objects are not revalidated
+  @FieldValidation(DefaultObjectValidator.class)
+  private RootPojo parent;
+
+  ...
+}
+...
+```
+
 Change History:
 ===================================================================================================
 0.4.9-SNAPSHOT - Under development in 'master' branch
 -----------------------------------------------------
 * Implemented validation for arrays and collections in all ...Validator sub-classes. Moved validateCollection() and validateArray() to AnnotatedFieldValidator.
+* Added object graph validation
 
 0.4.8 - Released 24 Oct 2014
 ----------------------------
@@ -239,7 +273,7 @@ Release 0.4.3 - Released 08 Jan 2013
 * Introduced the @FieldValidation annotation to utilize your own Validator at the field level.
 * Introduced message(), optional parameter to @RegexValidation annotation to facilitate describing
   the message to end-users instead of giving them the cryptic regex message.
-* Introduced ValiationEngine.validateAndThrow(Object), which throws a ValidationException if there
+* Introduced ValidationEngine.validateAndThrow(Object), which throws a ValidationException if there
   are validation errors in the object.
 * Fixed poor wording in Validations.minLength() error message.
 
