@@ -79,11 +79,11 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
-                        <configuration>
-                            <!-- DocLint is enabled by default in Java 8. Override it. -->
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                        </configuration>
-                    </execution>
+						<configuration>
+							<!-- DocLint is enabled by default in Java 8. Override it. -->
+							<additionalparam>-Xdoclint:none</additionalparam>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
