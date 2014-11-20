@@ -18,6 +18,7 @@ Supported annotations are:
 * @LongValidation - enforced min/max value.
 * @FieldValidation - utilize your own Validator implementation for the annotated field/property.
 * @ObjectValidation - utilize your own Validator implementation for the annotated class.
+* @ChildValidation - utilize ValidationEngine.validate() rules for the annotated field/property.
 
 In addition, to help protect from cross-site scripting (XSS) attacks, annotations are available
 to leverage the OWASP XSS library on string fields (also, see Maven Usage below):
@@ -34,6 +35,7 @@ Created to be simple, *Syntaxe* supports the following:
 * Validations utility class containing foreign methods to perform your own default validations
    such as requiredness, less-than, greater-than.
 * Validatable interface which calls out the validation contract for in-object validations.
+* Object graph validation to validate an entire payload in one call.
 
 In addition Syntaxe allows annotation of an entire class with the @ObjectValidation annotation
 to provide object-wide validation in addition to field-level annotation-driven validations.
@@ -199,20 +201,20 @@ Creating your own validator:
 Validating object graphs:
 =========================
 
-To validate a graph of objects originating from a root object, annotate the fields with @FieldValidation.
+To validate a graph of objects originating from a root object, annotate the fields with @ChildValidation.
 Syntaxe will process the fields of the child object, list of objects, or array of objects as described
-in the options above. 
+in the options above.
 
 ```java
 public class RootPojo
 {
-  @FieldValidation(DefaultObjectValidator.class)
+  @ChildValidation
   private ChildPojo childPojo;
 
-  @FieldValidation(DefaultObjectValidator.class)
+  @ChildValidation
   private List<ChildPojo> childPojoList;
 
-  @FieldValidation(DefaultObjectValidator.class)
+  @ChildValidation
   private ChildPojo[] childPojoArray;
 
   ...
@@ -220,10 +222,6 @@ public class RootPojo
 
 public class ChildPojo
 {
-  // cyclic graphs are supported, previously visited objects are not revalidated
-  @FieldValidation(DefaultObjectValidator.class)
-  private RootPojo parent;
-
   ...
 }
 ...

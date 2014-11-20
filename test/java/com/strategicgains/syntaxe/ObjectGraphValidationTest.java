@@ -15,9 +15,10 @@
 */
 package com.strategicgains.syntaxe;
 
+import com.strategicgains.syntaxe.annotation.ChildValidation;
 import com.strategicgains.syntaxe.annotation.FieldValidation;
 import com.strategicgains.syntaxe.annotation.Required;
-import com.strategicgains.syntaxe.validator.impl.DefaultObjectValidator;
+import com.strategicgains.syntaxe.validator.impl.ChildObjectValidator;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -284,13 +285,13 @@ public class ObjectGraphValidationTest
     private class RootObject
 	    implements Validatable
 	{
-        @FieldValidation(DefaultObjectValidator.class)
+        @ChildValidation
         private ChildObject childObject;
 
-        @FieldValidation(DefaultObjectValidator.class)
+        @ChildValidation
         private ChildObject[] childArray;
 
-        @FieldValidation(DefaultObjectValidator.class)
+        @ChildValidation
         private List<ChildObject> childList;
 
         @Required
@@ -313,7 +314,7 @@ public class ObjectGraphValidationTest
     private class ChildObject
         implements Validatable
     {
-        @FieldValidation(DefaultObjectValidator.class)
+        @ChildValidation
         private RootObject parentObject;
 
         @Required
