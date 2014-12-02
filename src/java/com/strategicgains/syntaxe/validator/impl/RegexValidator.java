@@ -70,6 +70,7 @@ extends AnnotatedFieldValidator<RegexValidation>
 		}
 	}
 
+    @Override
 	protected void validate(String name, Object value, List<String> errors)
 	{
 		validateRegex(name, value, getAnnotation().nullable(), regex, getAnnotation().message(), errors);

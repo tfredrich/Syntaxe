@@ -69,6 +69,7 @@ extends AnnotatedFieldValidator<LongValidation>
 		}
     }
 
+    @Override
 	protected void validate(String name, Object value, List<String> errors)
 	{
 		if (getAnnotation().min() != Long.MIN_VALUE)

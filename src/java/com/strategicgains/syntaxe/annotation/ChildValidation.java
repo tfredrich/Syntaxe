@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2012, Strategic Gains, Inc.
+    Copyright 2014, Strategic Gains, Inc.
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -15,24 +15,19 @@
 */
 package com.strategicgains.syntaxe.annotation;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import com.strategicgains.syntaxe.validator.impl.ChildObjectValidator;
+import com.strategicgains.syntaxe.validator.impl.RegexValidator;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import com.strategicgains.syntaxe.validator.Validator;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
- * Annotation for custom field validation.
- * 
- * @author toddf
- * @since Nov 13, 2012
- */
 @Target(FIELD)
 @Retention(RUNTIME)
-public @interface FieldValidation
+@ValidationProvider(ChildObjectValidator.class)
+public @interface ChildValidation
 {
 	String name() default "";
-	Class<? extends Validator> value();
 }

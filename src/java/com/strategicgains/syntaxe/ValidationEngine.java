@@ -19,11 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.strategicgains.syntaxe.annotation.FieldValidation;
@@ -100,7 +96,11 @@ public class ValidationEngine
 		}
 		finally
 		{
-			clearVisited();
+            if (isRootValidationObject(object))
+            {
+                // don't clear the visited set until the whole graph has been validated and it's back to the root
+                clearVisited();
+            }
 		}
 
 		return errors;
@@ -210,18 +210,44 @@ public class ValidationEngine
 
 		for (Annotation a : field.getAnnotations())
 		{
+            Validator<?> validator = null;
+            Class<? extends Validator> validatorClass = null;
+
+            // find a validator implementation. it can either be in a ValidationProvider annotation on the field's annotation,
+            // or it can be in the value parameter of the field's FieldValidation annotation
 			if (a.annotationType().isAnnotationPresent(ValidationProvider.class))
 			{
 				ValidationProvider providerAnnotation = a.annotationType().getAnnotation(ValidationProvider.class);
-				Constructor<?> constructor = providerAnnotation.value().getConstructor(Field.class, a.annotationType());
-				AnnotatedFieldValidator<?> provider = (AnnotatedFieldValidator<?>) constructor.newInstance(field, a);
-				validators.add(provider);
+                validatorClass = providerAnnotation.value();
 			}
 			else if (a.annotationType().isAssignableFrom(FieldValidation.class))
-			{
-				Class<? extends Validator> vc = ((FieldValidation) a).value();
-				validators.add(vc.newInstance());
-			}
+            {
+                validatorClass = ((FieldValidation) a).value();
+            }
+
+            if (validatorClass != null)
+            {
+                // if the validator extends AnnotatedFieldValidator use the (Field, Annotation) constructor, otherwise use the default constructor
+                if (AnnotatedFieldValidator.class.isAssignableFrom(validatorClass))
+                {
+                    Constructor<? extends Validator> constructor = validatorClass.getConstructor(Field.class, a.annotationType());
+
+                    if (constructor != null)
+                    {
+                        validator = constructor.newInstance(field, a);
+                    }
+                }
+                else
+                {
+                    validator = validatorClass.newInstance();
+                }
+
+                // if a validator was found and instantiated, add it to the list
+                if (validator != null)
+                {
+                    validators.add(validator);
+                }
+            }
 		}
 
 		cachedValidatorsByHashcode.put(field.hashCode(), validators);
@@ -328,7 +354,7 @@ public class ValidationEngine
 		
 		if (s == null)
 		{
-			s = new HashSet<Object>();
+			s = new LinkedHashSet<Object>(); // use an ordered set to know the first object is the root
 			visitedObjects.set(s);
 		}
 
@@ -345,4 +371,19 @@ public class ValidationEngine
 			visitedObjects.remove();
 		}
 	}
+
+    private static boolean isRootValidationObject(Object object)
+    {
+        Set<Object> s = visitedObjects.get();
+
+        if (s != null)
+        {
+            if (s.iterator().hasNext())
+            {
+                return (s.iterator().next() == object);
+            }
+        }
+
+        return false;
+    }
 }

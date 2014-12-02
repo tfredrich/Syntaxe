@@ -69,6 +69,7 @@ extends AnnotatedFieldValidator<IntegerValidation>
 		}
     }
 
+    @Override
 	protected void validate(String name, Object value, List<String> errors)
 	{
 		if (getAnnotation().min() != Integer.MIN_VALUE)

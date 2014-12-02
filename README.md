@@ -7,7 +7,7 @@ Syntaxe - Domain Model Validation
 Syntaxe is an annotations-based, functional-style syntactic (and semantic) domain model validation
 framework for Java.
 
-Simply annotate fields in your domain model and invoke the ValidationEngine.validat() method to
+Simply annotate fields in your domain model and invoke the ValidationEngine.validate() method to
 accomplish syntactic validation. Multiple annotations per field can be used to enforce multiple
 validations, if necessary.
 
@@ -18,6 +18,7 @@ Supported annotations are:
 * @LongValidation - enforced min/max value.
 * @FieldValidation - utilize your own Validator implementation for the annotated field/property.
 * @ObjectValidation - utilize your own Validator implementation for the annotated class.
+* @ChildValidation - utilize ValidationEngine.validate() rules for the annotated field/property.
 
 In addition, to help protect from cross-site scripting (XSS) attacks, annotations are available
 to leverage the OWASP XSS library on string fields (also, see Maven Usage below):
@@ -34,6 +35,7 @@ Created to be simple, *Syntaxe* supports the following:
 * Validations utility class containing foreign methods to perform your own default validations
    such as requiredness, less-than, greater-than.
 * Validatable interface which calls out the validation contract for in-object validations.
+* Object graph validation to validate an entire payload in one call.
 
 In addition Syntaxe allows annotation of an entire class with the @ObjectValidation annotation
 to provide object-wide validation in addition to field-level annotation-driven validations.
@@ -100,7 +102,7 @@ public class MyValidatableClass
 	@StringValidation(name="ID", required=true)
 	private String id;
 	
-	@StringValidation(name="Name", required=true, maxLenth=25)
+	@StringValidation(name="Name", required=true, maxLength=25)
 	private String name;
 
 	@IntegerValidation(name="Count", min=3, max=21)
@@ -129,7 +131,7 @@ extends AbstractValidatable
 	@StringValidation(name="ID", required=true)
 	private String id;
 	
-	@StringValidation(name="Name", required=true, minLength=5, maxLenth=25)
+	@StringValidation(name="Name", required=true, minLength=5, maxLength=25)
 	private String name;
 
 	@IntegerValidation(name="Count", min=3, max=21)
@@ -196,11 +198,41 @@ Creating your own validator:
 4. See the com.strategicgains.syntaxe.validators.basic or com.strategicgains.syntaxe.validators.regex for examples.
 
 
+Validating object graphs:
+=========================
+
+To validate a graph of objects originating from a root object, annotate the fields with @ChildValidation.
+Syntaxe will process the fields of the child object, list of objects, or array of objects as described
+in the options above.
+
+```java
+public class RootPojo
+{
+  @ChildValidation
+  private ChildPojo childPojo;
+
+  @ChildValidation
+  private List<ChildPojo> childPojoList;
+
+  @ChildValidation
+  private ChildPojo[] childPojoArray;
+
+  ...
+}
+
+public class ChildPojo
+{
+  ...
+}
+...
+```
+
 Change History:
 ===================================================================================================
 0.4.9-SNAPSHOT - Under development in 'master' branch
 -----------------------------------------------------
 * Implemented validation for arrays and collections in all ...Validator sub-classes. Moved validateCollection() and validateArray() to AnnotatedFieldValidator.
+* Added object graph validation
 
 0.4.8 - Released 24 Oct 2014
 ----------------------------
@@ -239,7 +271,7 @@ Release 0.4.3 - Released 08 Jan 2013
 * Introduced the @FieldValidation annotation to utilize your own Validator at the field level.
 * Introduced message(), optional parameter to @RegexValidation annotation to facilitate describing
   the message to end-users instead of giving them the cryptic regex message.
-* Introduced ValiationEngine.validateAndThrow(Object), which throws a ValidationException if there
+* Introduced ValidationEngine.validateAndThrow(Object), which throws a ValidationException if there
   are validation errors in the object.
 * Fixed poor wording in Validations.minLength() error message.
 
