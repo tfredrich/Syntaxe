@@ -229,10 +229,10 @@ public class ChildPojo
 
 Change History:
 ===================================================================================================
-0.4.9-SNAPSHOT - Under development in 'master' branch
+0.4.9 - Released 2 Dec 2014
 -----------------------------------------------------
 * Implemented validation for arrays and collections in all ...Validator sub-classes. Moved validateCollection() and validateArray() to AnnotatedFieldValidator.
-* Added object graph validation
+* Added object graph validation (thanks to Jason Reicheneker)
 
 0.4.8 - Released 24 Oct 2014
 ----------------------------
