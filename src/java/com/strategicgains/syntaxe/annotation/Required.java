@@ -27,11 +27,11 @@ import com.strategicgains.syntaxe.validator.impl.RequiredValidator;
  * Required annotation for field validation.  Verifies that a field is non-null.
  * If the field is an array, verifies that the array is non-null and that each
  * element in the array is non-null.
- * <p/>
+ * <p>
  * The 'value' property for this annotation is optional, and contains the name 
  * that will be used in error messages.  If it is not set, the name of the property
  * in the underlying object is used.
- * 
+ * </p>
  * @author toddf
  * @since Apr 3, 2013
  */

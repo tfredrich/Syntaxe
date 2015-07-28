@@ -52,16 +52,16 @@ public class ValidationEngine
 	 * Validates the object, returning a list of error messages
 	 * if validation fails.  If the list is empty, no errors
 	 * occurred.
-	 * <p/>
+	 * <p>
 	 * Also calls encode() to leverage any XSS encoding annotations.
-	 * <p/>
+	 * </p><p>
 	 * Note: this method calls Validatable.validate() if the
 	 * instance being validated implements the Validatable interface.
 	 * However, if Validatable.validate() turns around and calls
 	 * the ValidationEngine (with the same object), you will get
 	 * inconsistent results--with more-than the expected number of
 	 * error messages.
-	 * 
+	 * </p>
 	 * @param object
 	 * @return a List of error message strings. Never null.
 	 */
@@ -109,16 +109,16 @@ public class ValidationEngine
 	/**
 	 * Validates the object, throwing a ValidationException
 	 * if there were errors.
-	 * <p/>
+	 * <p>
 	 * Also calls encode() to leverage any XSS encoding annotations.
-	 * <p/>
+	 * </p><p>
 	 * Note: that this method calls Validatable.validate() if the
 	 * instance being validated implements the Validatable interface.
 	 * However, if Validatable.validate() turns around and calls
 	 * the ValidationEngine (on the same object), you will get
 	 * inconsistent results--with more-than the expected number of
 	 * error messages.
-	 * 
+	 * </p>
 	 * @param object
 	 * @throws ValidationException containing the error messages if a validation error occurs.
 	 */
@@ -135,11 +135,11 @@ public class ValidationEngine
 	/**
 	 * Leverages the XSS-encoding annotations to encode the String fields of the object
 	 * to help prevent cross-site scripting attacks.
-	 * <p/>
+	 * <p>
 	 * Note that validate() calls encode(), so it is not necessary to call both. This
 	 * method is here in case you don't want to call validate() and only want to perform
 	 * XSS encoding.
-	 * 
+	 * </p>
 	 * @param object an object in which to encode the fields for XSS prevention.
 	 */
 	public static void encode(Object object)

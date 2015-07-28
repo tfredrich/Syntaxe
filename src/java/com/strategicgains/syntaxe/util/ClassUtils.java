@@ -47,8 +47,8 @@ public class ClassUtils
 	 * Traverses from the given object up the inheritance hierarchy to list all the
 	 * declared fields.
 	 * 
-	 * @param object
-	 * @return
+	 * @param aClass
+	 * @return list of Field instances.
 	 */
 	public static List<Field> getAllDeclaredFields(Class<?> aClass)
 	{
