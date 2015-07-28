@@ -229,6 +229,10 @@ public class ChildPojo
 
 Change History:
 ===================================================================================================
+0.4.10-SNAPSHOT in branch 'master'
+----------------------------------
+* Upgraded Java output to 1.7 source and target.
+
 0.4.9 - Released 2 Dec 2014
 -----------------------------------------------------
 * Implemented validation for arrays and collections in all ...Validator sub-classes. Moved validateCollection() and validateArray() to AnnotatedFieldValidator.
