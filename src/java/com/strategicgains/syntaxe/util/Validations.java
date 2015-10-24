@@ -27,6 +27,8 @@ public class Validations
 	private static final String MIN_LENGTH_ERROR = "%s must contain at least %d characters";
 	private static final String LESS_THAN_OR_EQUAL_ERROR = "%s must be less-than or equal-to %d";
 	private static final String GREATER_THAN_OR_EQUAL_ERROR = "%s must be greater-than or equal-to %d";
+	private static final String LESS_THAN_OR_EQUAL_FLOAT_ERROR = "%s must be less-than or equal-to %f";
+	private static final String GREATER_THAN_OR_EQUAL_FLOAT_ERROR = "%s must be greater-than or equal-to %f";
 	
 	private Validations()
 	{
@@ -90,6 +92,22 @@ public class Validations
 		if (actual < min)
 		{
 			errors.add(String.format(GREATER_THAN_OR_EQUAL_ERROR, name, min));
+		}
+	}
+
+	public static void lessThanOrEqual(String name, float actual, float max, List<String> errors)
+	{
+		if (actual > max)
+		{
+			errors.add(String.format(LESS_THAN_OR_EQUAL_FLOAT_ERROR, name, max));
+		}
+	}
+
+	public static void greaterThanOrEqual(String name, float actual, float min, List<String> errors)
+	{
+		if (actual < min)
+		{
+			errors.add(String.format(GREATER_THAN_OR_EQUAL_FLOAT_ERROR, name, min));
 		}
 	}
 }
