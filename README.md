@@ -94,7 +94,8 @@ Option 1, POJO with annotations
 -------------------------------
 
 --This option enables POJO validations without requiring extension or implementation, using
-  annotations and the ValidationEngine to accomplish validation.
+  annotations and the ValidationEngine to accomplish validation. In the case of numerics, this
+  works equally well with primitives and object types (e.g. double/Double, float/Float, int/Integer).
 
 ```java
 public class MyValidatableClass
@@ -107,7 +108,13 @@ public class MyValidatableClass
 
 	@IntegerValidation(name="Count", min=3, max=21)
 	private int count;
-	
+
+	@DoubleValidation(name="Radius", min=0.0, max=3.1459, isNullable=false)
+	private Double radius;
+
+	@FloatValidation(name="Float Value", min=0.0, max=6.5)
+	private float floatValue;
+
 	@RegexValidation(name="Email Address", pattern="(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})", message="must be a valid email address")
 	private String email;
 }
@@ -203,11 +210,12 @@ Validating object graphs:
 
 To validate a graph of objects originating from a root object, annotate the fields with @ChildValidation.
 Syntaxe will process the fields of the child object, list of objects, or array of objects as described
-in the options above.
+in the options above. Can be combined with @Required to ensure that the property has a value.
 
 ```java
 public class RootPojo
 {
+  @Required("Child POJO")
   @ChildValidation
   private ChildPojo childPojo;
 
@@ -229,8 +237,13 @@ public class ChildPojo
 
 Change History:
 ===================================================================================================
-0.4.10-SNAPSHOT in branch 'master'
+0.4.11-SNAPSHOT in branch 'master'
 ----------------------------------
+* Merge pull request #8 from Noor Dawod, "Added DoubleValidator implementation"
+* Merge pull request #7 from Noor Dawad, "Added FloatValidator implementation"
+
+0.4.10 - Released 28 July 2015 
+------------------------------
 * Upgraded Java output to 1.7 source and target.
 
 0.4.9 - Released 2 Dec 2014
