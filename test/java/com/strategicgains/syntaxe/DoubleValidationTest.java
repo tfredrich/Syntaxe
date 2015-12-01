@@ -94,7 +94,7 @@ public class DoubleValidationTest
 	public void shouldPassValidateNonNull()
 	{
 		object.setValidatedDouble(7d);
-		object.setNullableDouble(5.734d);
+		object.setNullableDouble(4.734d);
 		List<String> errors = ValidationEngine.validate(object);
 		assertTrue(errors.isEmpty());
 	}
