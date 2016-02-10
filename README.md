@@ -47,7 +47,7 @@ Stable:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.8</version>
+			<version>1.0</version>
 		</dependency>
 ```
 Development:
@@ -55,7 +55,7 @@ Development:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.9-SNAPSHOT</version>
+			<version>1.1-SNAPSHOT</version>
 		</dependency>
 ```
 Or download the jar directly from: 
@@ -67,7 +67,7 @@ include the OWASP Encoder jar in your pom:
 		<dependency>
 			<groupId>org.owasp.encoder</groupId>
 			<artifactId>encoder</artifactId>
-			<version>1.1.1</version>
+			<version>1.2</version>
 		</dependency>
 ```
 
@@ -237,8 +237,8 @@ public class ChildPojo
 
 Change History:
 ===================================================================================================
-0.4.11-SNAPSHOT in branch 'master'
-----------------------------------
+1.0 - Released 10 Feb 2016
+--------------------------
 * Merge pull request #8 from Noor Dawod, "Added DoubleValidator implementation"
 * Merge pull request #7 from Noor Dawad, "Added FloatValidator implementation"
 
