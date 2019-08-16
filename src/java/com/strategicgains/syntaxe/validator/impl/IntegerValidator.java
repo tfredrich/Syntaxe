@@ -87,6 +87,6 @@ extends AnnotatedFieldValidator<IntegerValidation>
 
     private String determineName(String prefix)
     {
-    	return trimPrefix(prefix) + (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
+    	return (getAnnotation().name().isEmpty() ? trimPrefix(prefix) + getFieldName() : getAnnotation().name());
     }
 }

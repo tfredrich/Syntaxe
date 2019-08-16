@@ -237,6 +237,10 @@ public class ChildPojo
 
 Change History:
 ===================================================================================================
+1.1 - SNAPSHOT
+--------------
+* Added dot-notation-style field name prefixes for ChildValidation errors when validating an object graph.
+
 1.0 - Released 10 Feb 2016
 --------------------------
 * Merge pull request #8 from Noor Dawod, "Added DoubleValidator implementation"

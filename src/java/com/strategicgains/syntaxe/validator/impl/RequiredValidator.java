@@ -76,6 +76,6 @@ extends AnnotatedFieldValidator<Required>
 
     private String determineName(String prefix)
     {
-    	return trimPrefix(prefix) + (getAnnotation().value().isEmpty() ? getFieldName() : getAnnotation().value());
+    	return (getAnnotation().value().isEmpty() ? trimPrefix(prefix) + getFieldName() : getAnnotation().value());
     }
 }
