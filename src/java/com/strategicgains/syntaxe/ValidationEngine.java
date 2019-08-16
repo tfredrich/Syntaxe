@@ -67,6 +67,11 @@ public class ValidationEngine
 	 */
 	public static List<String> validate(Object object)
 	{
+		return validate(object, null);
+	}
+
+	public static List<String> validate(Object object, String prefix)
+	{
 		List<String> errors = new ArrayList<String>();
 
 		if (visit(object)) return errors;
@@ -87,8 +92,8 @@ public class ValidationEngine
 				}
 			}
 
-			validateFields(object, errors);
-			validateObject(object, errors);
+			validateFields(object, errors, prefix);
+			validateObject(object, errors, prefix);
 		}
 		catch (Exception e)
 		{
@@ -169,7 +174,7 @@ public class ValidationEngine
 		}
 	}
 
-	private static void validateFields(Object object, List<String> errors)
+	private static void validateFields(Object object, List<String> errors, String prefix)
 	throws Exception
 	{
 		Collection<Field> fields = getAllDeclaredFields(object.getClass());
@@ -184,7 +189,7 @@ public class ValidationEngine
 				{
 					for (Validator validator : validators)
 					{
-						validator.perform(object, errors);
+						validator.perform(object, errors, prefix);
 					}
 				}
 				catch (ValidationException e)
@@ -300,7 +305,7 @@ public class ValidationEngine
 		return fields;
 	}
 
-	private static void validateObject(Object object, List<String> errors)
+	private static void validateObject(Object object, List<String> errors, String prefix)
 	throws InstantiationException, IllegalAccessException
 	{
 		ObjectValidation annotation = object.getClass().getAnnotation(ObjectValidation.class);
@@ -315,7 +320,7 @@ public class ValidationEngine
 			cachedObjectValidatorsByClass.put(object.getClass(), validator);
 		}
 		
-		validator.perform(object, errors);
+		validator.perform(object, errors, prefix);
 	}
 
 	private static boolean isValidatable(Object object)

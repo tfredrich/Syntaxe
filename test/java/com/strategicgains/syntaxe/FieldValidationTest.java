@@ -84,7 +84,7 @@ public class FieldValidationTest
 		}
 
 		@Override
-        public void perform(FieldValidationClass instance, List<String> errors)
+        public void perform(FieldValidationClass instance, List<String> errors, String prefix)
         {
 			FieldValidationClass fv = ((FieldValidationClass) instance);
 			errors.add(fv.field1);

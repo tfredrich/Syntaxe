@@ -23,5 +23,5 @@ import java.util.List;
  */
 public interface Validator<T>
 {
-	public void perform(T instance, List<String> errors);
+	public void perform(T instance, List<String> errors, String namePrefix);
 }

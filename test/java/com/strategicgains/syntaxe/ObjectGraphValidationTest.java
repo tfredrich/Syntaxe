@@ -15,21 +15,19 @@
 */
 package com.strategicgains.syntaxe;
 
-import com.strategicgains.syntaxe.annotation.ChildValidation;
-import com.strategicgains.syntaxe.annotation.FieldValidation;
-import com.strategicgains.syntaxe.annotation.Required;
-import com.strategicgains.syntaxe.validator.impl.ChildObjectValidator;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+
+import com.strategicgains.syntaxe.annotation.ChildValidation;
+import com.strategicgains.syntaxe.annotation.Required;
 
 public class ObjectGraphValidationTest
 {
-    // region Child Object
     @Test
     public void acyclicGraphWithoutErrors()
     {
@@ -95,10 +93,6 @@ public class ObjectGraphValidationTest
         assertEquals(1, childObject.getValidationCount());
         assertEquals(2, errors.size());
     }
-
-    // endregion
-
-    // region Child Array
 
     @Test
     public void acyclicGraphArrayWithoutErrors()
@@ -188,10 +182,6 @@ public class ObjectGraphValidationTest
         assertEquals(3, errors.size());
     }
 
-    // endregion
-
-    // region Child List
-
     @Test
     public void acyclicGraphListWithoutErrors()
     {
@@ -280,10 +270,21 @@ public class ObjectGraphValidationTest
         assertEquals(3, errors.size());
     }
 
-    // endregion
+	@Test
+	public void shouldHaveNamePrefixed()
+	{
+		RootObject root = new RootObject();
+		ChildObject child = new ChildObject();
+		child.requiredField = null;
+		root.childObject = child;
+
+		List<String> errors = ValidationEngine.validate(root);
+
+		assertEquals("childObject.requiredField is required", errors.get(0));
+	}
 
     private class RootObject
-	    implements Validatable
+    implements Validatable
 	{
         @ChildValidation
         private ChildObject childObject;
@@ -312,7 +313,7 @@ public class ObjectGraphValidationTest
 	}
 
     private class ChildObject
-        implements Validatable
+    implements Validatable
     {
         @ChildValidation
         private RootObject parentObject;

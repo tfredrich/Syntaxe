@@ -40,9 +40,9 @@ extends AnnotatedFieldValidator<StringValidation>
     }
 
     @Override
-    public void perform(Object instance, List<String> errors)
+    public void perform(Object instance, List<String> errors, String prefix)
     {
-		String name = determineName();
+		String name = determineName(prefix);
 		Object value = getValue(instance);
 
 		if (getAnnotation().required())
@@ -92,8 +92,8 @@ extends AnnotatedFieldValidator<StringValidation>
 		}
     }
 
-    protected String determineName()
+    private String determineName(String prefix)
     {
-		return (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
+    	return trimPrefix(prefix) + (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
     }
 }

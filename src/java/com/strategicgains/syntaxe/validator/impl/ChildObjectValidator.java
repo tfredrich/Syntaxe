@@ -15,14 +15,13 @@
 */
 package com.strategicgains.syntaxe.validator.impl;
 
-import com.strategicgains.syntaxe.ValidationEngine;
-import com.strategicgains.syntaxe.annotation.ChildValidation;
-import com.strategicgains.syntaxe.annotation.FieldValidation;
-import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
-
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
+
+import com.strategicgains.syntaxe.ValidationEngine;
+import com.strategicgains.syntaxe.annotation.ChildValidation;
+import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
 
 /**
  * Implements the default behavior for validating objects. It performs
@@ -40,9 +39,9 @@ public class ChildObjectValidator
     }
 
     @Override
-    public void perform(Object instance, List<String> errors)
+    public void perform(Object instance, List<String> errors, String prefix)
     {
-        String name = determineName();
+        String name = determineName(prefix);
         Object value = getValue(instance);
 
         if (value == null)
@@ -66,12 +65,12 @@ public class ChildObjectValidator
 
     @Override
     protected void validate(String name, Object value, List<String> errors) {
-        List<String> newErrors = ValidationEngine.validate(value);
+        List<String> newErrors = ValidationEngine.validate(value, name);
         errors.addAll(newErrors);
     }
 
-    private String determineName()
+    private String determineName(String prefix)
     {
-        return (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
+    	return trimPrefix(prefix) + (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
     }
 }

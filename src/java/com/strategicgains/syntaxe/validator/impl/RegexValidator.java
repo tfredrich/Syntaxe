@@ -42,10 +42,10 @@ extends AnnotatedFieldValidator<RegexValidation>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void perform(Object instance, List<String> errors)
+	public void perform(Object instance, List<String> errors, String prefix)
 	{
 		Object value = getValue(instance);
-		String name = determineFieldName();
+		String name = determineName(prefix);
 
 		if (!getAnnotation().nullable())
 		{
@@ -109,8 +109,8 @@ extends AnnotatedFieldValidator<RegexValidation>
 		}
 	}
 
-	protected String determineFieldName()
-	{
-		return (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
-	}
+    private String determineName(String prefix)
+    {
+    	return trimPrefix(prefix) + (getAnnotation().name().isEmpty() ? getFieldName() : getAnnotation().name());
+    }
 }

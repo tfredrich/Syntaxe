@@ -27,6 +27,8 @@ import java.util.List;
 public abstract class AnnotatedFieldValidator<AnnotationType extends Annotation>
 extends AbstractFieldValidator
 {
+	private static final String EMPTY_PREFIX = "";
+
 	private AnnotationType annotation;
 
 	public AnnotatedFieldValidator(Field field, AnnotationType annotation)
@@ -75,4 +77,9 @@ extends AbstractFieldValidator
     }
 
 	protected abstract void validate(String name, Object value, List<String> errors);
+
+	protected String trimPrefix(String prefix)
+	{
+		return (prefix != null && !prefix.isBlank() ? prefix + "." : EMPTY_PREFIX);
+	}
 }
