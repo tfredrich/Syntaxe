@@ -24,20 +24,20 @@ import java.util.List;
  * @author toddf
  * @since Mar 17, 2011
  */
-public abstract class AnnotatedFieldValidator<AnnotationType extends Annotation>
+public abstract class AnnotatedFieldValidator<T extends Annotation>
 extends AbstractFieldValidator
 {
 	private static final String EMPTY_PREFIX = "";
 
-	private AnnotationType annotation;
+	private T annotation;
 
-	public AnnotatedFieldValidator(Field field, AnnotationType annotation)
+	public AnnotatedFieldValidator(Field field, T annotation)
 	{
 		super(field);
 		this.annotation = annotation;
 	}
-	
-	protected AnnotationType getAnnotation()
+
+	protected T getAnnotation()
 	{
 		return annotation;
 	}
@@ -80,6 +80,6 @@ extends AbstractFieldValidator
 
 	protected String trimPrefix(String prefix)
 	{
-		return (prefix != null && !prefix.isBlank() ? prefix + "." : EMPTY_PREFIX);
+		return (prefix != null && !prefix.trim().isEmpty() ? prefix + "." : EMPTY_PREFIX);
 	}
 }

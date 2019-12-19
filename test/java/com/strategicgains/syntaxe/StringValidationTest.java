@@ -162,7 +162,7 @@ public class StringValidationTest
 			this.unnamedString = value;
 		}
 	}
-	
+
 	private class InnerToo
 	{
 		@StringValidation(name = "Required Array", required = true, maxLength = 6, minLength = 2)

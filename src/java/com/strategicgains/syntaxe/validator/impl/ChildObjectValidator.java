@@ -31,7 +31,7 @@ import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
  */
 
 public class ChildObjectValidator
-        extends AnnotatedFieldValidator<ChildValidation>
+extends AnnotatedFieldValidator<ChildValidation>
 {
     public ChildObjectValidator(Field field, ChildValidation annotation)
     {
