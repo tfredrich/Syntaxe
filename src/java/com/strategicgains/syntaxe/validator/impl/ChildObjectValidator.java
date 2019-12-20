@@ -18,6 +18,7 @@ package com.strategicgains.syntaxe.validator.impl;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.strategicgains.syntaxe.ValidationEngine;
 import com.strategicgains.syntaxe.annotation.ChildValidation;
@@ -25,52 +26,57 @@ import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
 
 /**
  * Implements the default behavior for validating objects. It performs
- * validation on the object if it implements {@code Validator},
- * on all the annotated fields and for any custom validator
- * annotated on the object.
+ * validation on the object if it implements {@code Validator}, on all the
+ * annotated fields and for any custom validator annotated on the object.
  */
 
 public class ChildObjectValidator
 extends AnnotatedFieldValidator<ChildValidation>
 {
-    public ChildObjectValidator(Field field, ChildValidation annotation)
-    {
-        super(field, annotation);
-    }
+	public ChildObjectValidator(Field field, ChildValidation annotation)
+	{
+		super(field, annotation);
+	}
 
-    @Override
-    public void perform(Object instance, List<String> errors, String prefix)
-    {
-        String name = determineName(prefix);
-        Object value = getValue(instance);
+	@SuppressWarnings("unchecked")
+	@Override
+	public void perform(Object instance, List<String> errors, String prefix)
+	{
+		String name = determineName(prefix);
+		Object value = getValue(instance);
 
-        if (value == null)
-        {
-            return;
-        }
+		if (value == null)
+		{
+			return;
+		}
 
-        if (isArray())
-        {
-            validateArray(name, false, (Object[]) value, errors);
-        }
-        else if (isCollection())
-        {
-            validateCollection(name, false, (Collection<Object>) value, errors);
-        }
-        else
-        {
-            validate(name, value, errors);
-        }
-    }
+		if (isArray())
+		{
+			validateArray(name, false, (Object[]) value, errors);
+		}
+		else if (isCollection())
+		{
+			validateCollection(name, false, (Collection<Object>) value, errors);
+		}
+		else if (isMap())
+		{
+			validateCollection(name, false, ((Map<?, Object>) value).values(), errors);
+		}
+		else
+		{
+			validate(name, value, errors);
+		}
+	}
 
-    @Override
-    protected void validate(String name, Object value, List<String> errors) {
-        List<String> newErrors = ValidationEngine.validate(value, name);
-        errors.addAll(newErrors);
-    }
+	@Override
+	protected void validate(String name, Object value, List<String> errors)
+	{
+		List<String> newErrors = ValidationEngine.validate(value, name);
+		errors.addAll(newErrors);
+	}
 
-    private String determineName(String prefix)
-    {
-    	return (getAnnotation().name().isEmpty() ? trimPrefix(prefix) + getFieldName() : getAnnotation().name());
-    }
+	private String determineName(String prefix)
+	{
+		return (getAnnotation().name().isEmpty() ? trimPrefix(prefix) + getFieldName() : getAnnotation().name());
+	}
 }

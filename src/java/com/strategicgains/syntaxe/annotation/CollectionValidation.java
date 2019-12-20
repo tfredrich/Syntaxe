@@ -10,6 +10,8 @@ import com.strategicgains.syntaxe.validator.impl.CollectionValidator;
 
 /**
  * Enables validation of collection size and nullability/requiredness.
+ * Use the individual validation annotations to check the items in the collection (assuming it's a homogeneous collection).
+ * For example, StringValidation, supports validating each element of a String collection or array, as do the others.
  * 
  * @author tfredrich
  * @since December 19, 2019

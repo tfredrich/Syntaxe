@@ -17,8 +17,12 @@ package com.strategicgains.syntaxe;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -73,9 +77,11 @@ public class RegexValidationTest
 	public void shouldFailNullable()
 	{
 		object.setNotNullString(null);
+		object.setNotNullMap(null);
 		List<String> errors = ValidationEngine.validate(object);
-		assertEquals(1, errors.size());
+		assertEquals(2, errors.size());
 		assertEquals("not-null-string is required", errors.get(0));
+		assertEquals("not-null-map is required", errors.get(1));
 	}
 
 	@Test
@@ -95,7 +101,7 @@ public class RegexValidationTest
 		HashSet<String> collection = new HashSet<String>();
 		collection.add("ab");
 		collection.add("cd");
-		object.setNotNullCollection(collection);
+		object.setNullableCollection(collection);
 		List<String> errors = ValidationEngine.validate(object);
 		assertEquals(0, errors.size());
 	}
@@ -108,11 +114,41 @@ public class RegexValidationTest
 		HashSet<String> collection = new HashSet<String>();
 		collection.add("ab");
 		collection.add("cd");
-		object.setNotNullCollection(collection);
+		object.setNullableCollection(collection);
 		String[] stringArray = new String[] {"ef", "gh"}; 
-		object.setNotNullStringArray(stringArray);
+		object.setStringArray(stringArray);
 		List<String> errors = ValidationEngine.validate(object);
 		assertEquals(0, errors.size());
+	}
+
+	@Test
+	public void shouldValidateNullableMapValues()
+	{
+		Map<String, String> map = new LinkedHashMap<>();
+		map.put("todd", "was here");
+		map.put("qr", "st");
+		map.put("foo", "bar");
+		object.setNotNullString("ab");
+		object.setNullableMap(map);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertEquals("nullable-map[0] must be a two-character, lower-case string", errors.get(0));
+		assertEquals("nullable-map[2] must be a two-character, lower-case string", errors.get(1));
+	}
+
+	@Test
+	public void shouldValidateNonNullableMapValues()
+	{
+		Map<String, String> map = new LinkedHashMap<>();
+		map.put("todd", "was here");
+		map.put("qr", "st");
+		map.put("foo", "bar");
+		object.setNotNullString("ab");
+		object.setNotNullMap(map);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertEquals("not-null-map[0] does not match the regular expression pattern: [a-z]{2}", errors.get(0));
+		assertEquals("not-null-map[2] does not match the regular expression pattern: [a-z]{2}", errors.get(1));
 	}
 
 	private class Inner
@@ -122,12 +158,24 @@ public class RegexValidationTest
 		
 		@RegexValidation(name="nullable-string", nullable=true, pattern="[a-z]{2}", message = "must be a two-character, lower-case string")
 		private String nullableString;
+
+		@RegexValidation(name="nullable-Collection", nullable=true, pattern="[a-z]{2}")
+		private Collection<String> nullableCollection = new HashSet<String>();
 		
-		@RegexValidation(name="not-null-Collection", nullable=true, pattern="[a-z]{2}")
-		private HashSet<String> notNullCollection = new HashSet<String>();
-		
-		@RegexValidation(name = "not-null-String-Array", nullable = true, pattern="[a-z]{2}")
-		public String[] stringArray = null;	
+		@RegexValidation(name = "string-array", nullable = true, pattern="[a-z]{2}")
+		public String[] stringArray = null;
+
+		@RegexValidation(name="nullable-map", nullable=true, pattern="[a-z]{2}", message = "must be a two-character, lower-case string")
+		public Map<String, String> nullableMap;
+
+		@RegexValidation(name="not-null-map", nullable=false, pattern="[a-z]{2}")
+		public Map<String, String> notNullMap = new HashMap<>();
+
+		public Inner()
+		{
+			super();
+			notNullMap.put("zy", "xw");
+		}
 
 		public void setNotNullString(String notNullString)
         {
@@ -138,16 +186,25 @@ public class RegexValidationTest
         {
         	this.nullableString = nullableString;
         }
-		
-		public void setNotNullCollection(HashSet<String> notNullCollection)
+
+		public void setNullableCollection(Collection<String> nullableCollection)
         {
-        	this.notNullCollection = notNullCollection;
-        }
-		
-		public void setNotNullStringArray(String[] stringArray)
-        {
-        	this.stringArray = stringArray;
+        	this.nullableCollection = nullableCollection;
         }
 
+		public void setStringArray(String[] stringArray)
+		{
+			this.stringArray = stringArray;
+		}
+
+		public void setNullableMap(Map<String, String> nullableMap)
+		{
+			this.nullableMap = nullableMap;
+		}
+
+		public void setNotNullMap(Map<String, String> notNullMap)
+		{
+			this.notNullMap = notNullMap;
+		}
 	}
 }

@@ -18,6 +18,7 @@ package com.strategicgains.syntaxe.validator.impl;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.strategicgains.syntaxe.annotation.FloatValidation;
 import com.strategicgains.syntaxe.util.Validations;
@@ -62,6 +63,10 @@ extends AnnotatedFieldValidator<FloatValidation>
 		else if (isCollection())
 		{
 			validateCollection(name, !getAnnotation().isNullable(), (Collection<Object>) value, errors);
+		}
+		else if (isMap())
+		{
+			validateCollection(name, !getAnnotation().isNullable(), (value == null ? null : ((Map<?, Object>) value).values()), errors);
 		}
 		else
 		{

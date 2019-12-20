@@ -11,14 +11,25 @@ Simply annotate fields in your domain model and invoke the ValidationEngine.vali
 accomplish syntactic validation. Multiple annotations per field can be used to enforce multiple
 validations, if necessary.
 
+Also note that annotations can be used on homogeneous collections as well. For example, annotating
+a List<String> property with @StringValidation will enforce the validation rules on the entire
+collection.
+
+It works for Map sub-types as well. However, only the values collection (not the keys) is validated.
+
 Supported annotations are:
-* @StringValidation - enforces 'required-ness', min/max length.
-* @RegexValidation - enforces the string field to comply with a regular expression.
+* @ChildValidation - executes validations on a referenced object or collection of objects.
+* @CollectionValidation - Enforce size limits (min & max) on a collection or map.
+* @DoubleValidation - enforced min/max value.
+* @FieldValidation - utilize your own Validator implementation for the annotated field/property.
+* @FloatValidation - enforced min/max value.
 * @IntegerValidation - enforces min/max value.
 * @LongValidation - enforced min/max value.
-* @FieldValidation - utilize your own Validator implementation for the annotated field/property.
 * @ObjectValidation - utilize your own Validator implementation for the annotated class.
-* @ChildValidation - utilize ValidationEngine.validate() rules for the annotated field/property.
+* @RegexValidation - enforces the string field to comply with a regular expression.
+* @Required - enforce presence of a nullable type.
+* @StringValidation - enforces 'required-ness', min/max length.
+* @ValidationProvider - utilize your AnnotatedFieldValidator implementation for the annotated field/property.
 
 In addition, to help protect from cross-site scripting (XSS) attacks, annotations are available
 to leverage the OWASP XSS library on string fields (also, see Maven Usage below):
@@ -240,6 +251,8 @@ Change History:
 1.1 - SNAPSHOT
 --------------
 * Added dot-notation-style field name prefixes for ChildValidation errors when validating an object graph.
+* Added CollectionValidation annotation to support enforcement of collection and map size limits.
+* Added support in all validation annotations to validate Map values (not keys) as well as collections and arrays.
 
 1.0 - Released 10 Feb 2016
 --------------------------

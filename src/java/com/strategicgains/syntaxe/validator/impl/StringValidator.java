@@ -18,6 +18,7 @@ package com.strategicgains.syntaxe.validator.impl;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.strategicgains.syntaxe.annotation.StringValidation;
 import com.strategicgains.syntaxe.util.Validations;
@@ -39,7 +40,8 @@ extends AnnotatedFieldValidator<StringValidation>
 	    super(field, annotation);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void perform(Object instance, List<String> errors, String prefix)
     {
 		String name = determineName(prefix);
@@ -61,6 +63,10 @@ extends AnnotatedFieldValidator<StringValidation>
 		else if (isArray())
 		{
 			validateArray(name, getAnnotation().required(), (value == null ? null : ((Object[]) value)), errors);
+		}
+		else if (isMap())
+		{
+			validateCollection(name, getAnnotation().required(), (value == null ? null : ((Map<?, Object>) value).values()), errors);
 		}
 		else
 		{

@@ -18,7 +18,12 @@ package com.strategicgains.syntaxe;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -108,7 +113,37 @@ public class IntegerValidationTest
 		assertEquals(1, errors.size());
 		assertTrue(errors.get(0).contains("nullableInteger"));
 	}
-	
+
+	@Test
+	public void shouldValidateNullableMapValues()
+	{
+		Map<String, Integer> map = new LinkedHashMap<>();
+		map.put("todd", 3);
+		map.put("qr", 9);
+		map.put("foo", 11);
+		object.setNullableMap(map);
+		object.setValidatedInt(7);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertEquals("nullableMap[1] must be less-than or equal-to 5", errors.get(0));
+		assertEquals("nullableMap[2] must be less-than or equal-to 5", errors.get(1));
+	}
+
+	@Test
+	public void shouldValidateNonNullableMapValues()
+	{
+		Map<String, Integer> map = new LinkedHashMap<>();
+		map.put("todd", 3);
+		map.put("qr", 9);
+		map.put("foo", 11);
+		object.setNotNullMap(map);
+		object.setValidatedInt(7);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertEquals("notNullMap[0] must be greater-than or equal-to 5", errors.get(0));
+		assertEquals("notNullMap[2] must be less-than or equal-to 10", errors.get(1));
+	}
+
 	@SuppressWarnings("unused")
 	private class Inner
 	{
@@ -125,6 +160,21 @@ public class IntegerValidationTest
 
 		@IntegerValidation(min=0, max=5)
 		private Integer nonNullableInteger = 1;
+
+		@IntegerValidation(min=0, max=5, isNullable=true)
+		private Collection<Integer> nullableCollection = new HashSet<>();
+
+		@IntegerValidation(min=0, max=5, isNullable=true)
+		public Map<String, Integer> nullableMap;
+
+		@IntegerValidation(min=5, max=10)
+		public Map<String, Integer> notNullMap = new HashMap<>();
+
+		public Inner()
+		{
+			super();
+			notNullMap.put("ab", 6);
+		}
 
 		public void setValidatedInt(int validatedInt)
         {
@@ -149,6 +199,21 @@ public class IntegerValidationTest
 		public void setNonNullableInteger(Integer value)
 		{
 			this.nonNullableInteger = value;
+		}
+
+		public void setNullableCollection(Collection<Integer> nullableCollection)
+        {
+        	this.nullableCollection = nullableCollection;
+        }
+
+		public void setNullableMap(Map<String, Integer> nullableMap)
+		{
+			this.nullableMap = nullableMap;
+		}
+
+		public void setNotNullMap(Map<String, Integer> notNullMap)
+		{
+			this.notNullMap = notNullMap;
 		}
 	}
 }

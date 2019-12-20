@@ -18,7 +18,12 @@ package com.strategicgains.syntaxe;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -108,7 +113,37 @@ public class FloatValidationTest
 		assertEquals(1, errors.size());
 		assertTrue(errors.get(0).contains("nullableFloat"));
 	}
-	
+
+	@Test
+	public void shouldValidateNullableMapValues()
+	{
+		Map<String, Float> map = new LinkedHashMap<>();
+		map.put("todd", 3f);
+		map.put("qr", 9f);
+		map.put("foo", 11f);
+		object.setNullableMap(map);
+		object.setValidatedFloat(7f);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertTrue(errors.get(0).startsWith("nullableMap[1] must be less-than or equal-to 5.0"));
+		assertTrue(errors.get(1).startsWith("nullableMap[2] must be less-than or equal-to 5.0"));
+	}
+
+	@Test
+	public void shouldValidateNonNullableMapValues()
+	{
+		Map<String, Float> map = new LinkedHashMap<>();
+		map.put("todd", 3f);
+		map.put("qr", 9f);
+		map.put("foo", 11f);
+		object.setNotNullMap(map);
+		object.setValidatedFloat(7f);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertTrue(errors.get(0).startsWith("notNullMap[0] must be greater-than or equal-to 5.0"));
+		assertTrue(errors.get(1).startsWith("notNullMap[2] must be less-than or equal-to 10.0"));
+	}
+
 	@SuppressWarnings("unused")
 	private class Inner
 	{
@@ -125,6 +160,21 @@ public class FloatValidationTest
 
 		@FloatValidation(min=0f, max=5f)
 		private Float nonNullableFloat = 1f;
+
+		@FloatValidation(min=0f, max=5f, isNullable=true)
+		private Collection<Float> nullableCollection = new HashSet<>();
+
+		@FloatValidation(min=0f, max=5f, isNullable=true)
+		public Map<String, Float> nullableMap;
+
+		@FloatValidation(min=5f, max=10f)
+		public Map<String, Float> notNullMap = new HashMap<>();
+
+		public Inner()
+		{
+			super();
+			notNullMap.put("ab", 6f);
+		}
 
 		public void setValidatedFloat(float validatedFloat)
         {
@@ -149,6 +199,21 @@ public class FloatValidationTest
 		public void setNonNullableFloat(Float value)
 		{
 			this.nonNullableFloat = value;
+		}
+
+		public void setNullableCollection(Collection<Float> nullableCollection)
+        {
+        	this.nullableCollection = nullableCollection;
+        }
+
+		public void setNullableMap(Map<String, Float> nullableMap)
+		{
+			this.nullableMap = nullableMap;
+		}
+
+		public void setNotNullMap(Map<String, Float> notNullMap)
+		{
+			this.notNullMap = notNullMap;
 		}
 	}
 }

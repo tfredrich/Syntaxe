@@ -18,7 +18,11 @@ package com.strategicgains.syntaxe;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -109,6 +113,36 @@ public class LongValidationTest
 		assertTrue(errors.get(0).contains("nullableLong"));
 	}
 
+	@Test
+	public void shouldValidateNullableMapValues()
+	{
+		Map<String, Long> map = new HashMap<>();
+		map.put("todd", 3L);
+		map.put("qr", 9L);
+		map.put("foo", 11L);
+		object.setNullableMap(map);
+		object.setValidatedLong(7L);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertEquals("nullableMap[0] must be less-than or equal-to 5", errors.get(0));
+		assertEquals("nullableMap[1] must be less-than or equal-to 5", errors.get(1));
+	}
+
+	@Test
+	public void shouldValidateNonNullableMapValues()
+	{
+		Map<String, Long> map = new HashMap<>();
+		map.put("todd", 3L);
+		map.put("qr", 9L);
+		map.put("foo", 11L);
+		object.setNotNullMap(map);
+		object.setValidatedLong(7L);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertEquals("notNullMap[1] must be less-than or equal-to 10", errors.get(0));
+		assertEquals("notNullMap[2] must be greater-than or equal-to 5", errors.get(1));
+	}
+
 	@SuppressWarnings("unused")
 	private class Inner
 	{
@@ -125,6 +159,21 @@ public class LongValidationTest
 
 		@LongValidation(min=-1, max=5)
 		private Long nonNullableLong = 1L;
+
+		@LongValidation(min=-1, max=5, isNullable=true)
+		private Collection<Long> nullableCollection = new HashSet<>();
+
+		@LongValidation(min=-1, max=5, isNullable=true)
+		public Map<String, Long> nullableMap;
+
+		@LongValidation(min=5, max=10)
+		public Map<String, Long> notNullMap = new HashMap<>();
+
+		public Inner()
+		{
+			super();
+			notNullMap.put("ab", 6L);
+		}
 
 		public void setValidatedLong(long value)
         {
@@ -149,6 +198,21 @@ public class LongValidationTest
 		public void setNonNullableLong(Long value)
 		{
 			this.nonNullableLong = value;
+		}
+
+		public void setNullableCollection(Collection<Long> nullableCollection)
+        {
+        	this.nullableCollection = nullableCollection;
+        }
+
+		public void setNullableMap(Map<String, Long> nullableMap)
+		{
+			this.nullableMap = nullableMap;
+		}
+
+		public void setNotNullMap(Map<String, Long> notNullMap)
+		{
+			this.notNullMap = notNullMap;
 		}
 	}
 }

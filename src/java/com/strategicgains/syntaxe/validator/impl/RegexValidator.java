@@ -18,6 +18,7 @@ package com.strategicgains.syntaxe.validator.impl;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,6 +64,10 @@ extends AnnotatedFieldValidator<RegexValidation>
 		else if (isArray())
 		{
 			validateArray(name, !getAnnotation().nullable(), (value == null ? null : ((Object[]) value)), errors);
+		}
+		else if (isMap())
+		{
+			validateCollection(name, !getAnnotation().nullable(), (value == null ? null : ((Map<?, Object>) value).values()), errors);
 		}
 		else
 		{

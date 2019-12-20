@@ -18,7 +18,12 @@ package com.strategicgains.syntaxe;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -108,7 +113,37 @@ public class DoubleValidationTest
 		assertEquals(1, errors.size());
 		assertTrue(errors.get(0).contains("nullableDouble"));
 	}
-	
+
+	@Test
+	public void shouldValidateNullableMapValues()
+	{
+		Map<String, Double> map = new LinkedHashMap<>();
+		map.put("todd", 3d);
+		map.put("qr", 9d);
+		map.put("foo", 11d);
+		object.setNullableMap(map);
+		object.setValidatedDouble(7d);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertTrue(errors.get(0).startsWith("nullableMap[1] must be less-than or equal-to 5.0"));
+		assertTrue(errors.get(1).startsWith("nullableMap[2] must be less-than or equal-to 5.0"));
+	}
+
+	@Test
+	public void shouldValidateNonNullableMapValues()
+	{
+		Map<String, Double> map = new LinkedHashMap<>();
+		map.put("todd", 3d);
+		map.put("qr", 9d);
+		map.put("foo", 11d);
+		object.setNotNullMap(map);
+		object.setValidatedDouble(7d);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertTrue(errors.get(0).startsWith("notNullMap[0] must be greater-than or equal-to 5.0"));
+		assertTrue(errors.get(1).startsWith("notNullMap[2] must be less-than or equal-to 10.0"));
+	}
+
 	@SuppressWarnings("unused")
 	private class Inner
 	{
@@ -117,14 +152,29 @@ public class DoubleValidationTest
 		
 		private double ignoredDouble;
 
-		@DoubleValidation(min=-1, max=1)
+		@DoubleValidation(min=-1d, max=1d)
 		private double doubleField;
 
-		@DoubleValidation(min=0, max=5, isNullable=true)
+		@DoubleValidation(min=0d, max=5d, isNullable=true)
 		private Double nullableDouble;
 
-		@DoubleValidation(min=0, max=5)
+		@DoubleValidation(min=0d, max=5d)
 		private Double nonNullableDouble = 1d;
+
+		@DoubleValidation(min=0d, max=5d, isNullable=true)
+		private Collection<Double> nullableCollection = new HashSet<>();
+
+		@DoubleValidation(min=0d, max=5d, isNullable=true)
+		public Map<String, Double> nullableMap;
+
+		@DoubleValidation(min=5d, max=10d)
+		public Map<String, Double> notNullMap = new HashMap<>();
+
+		public Inner()
+		{
+			super();
+			notNullMap.put("ab", 6d);
+		}
 
 		public void setValidatedDouble(double validatedDouble)
         {
@@ -149,6 +199,21 @@ public class DoubleValidationTest
 		public void setNonNullableDouble(Double value)
 		{
 			this.nonNullableDouble = value;
+		}
+
+		public void setNullableCollection(Collection<Double> nullableCollection)
+        {
+        	this.nullableCollection = nullableCollection;
+        }
+
+		public void setNullableMap(Map<String, Double> nullableMap)
+		{
+			this.nullableMap = nullableMap;
+		}
+
+		public void setNotNullMap(Map<String, Double> notNullMap)
+		{
+			this.notNullMap = notNullMap;
 		}
 	}
 }

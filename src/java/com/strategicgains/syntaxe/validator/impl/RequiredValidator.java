@@ -18,6 +18,7 @@ package com.strategicgains.syntaxe.validator.impl;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.strategicgains.syntaxe.annotation.Required;
 import com.strategicgains.syntaxe.util.Validations;
@@ -61,6 +62,10 @@ extends AnnotatedFieldValidator<Required>
 		if (isArray())
 		{
 			validateArray(name, true, (value == null ? null : ((Object[]) value)), errors);
+		}
+		else if (isMap())
+		{
+			validateCollection(name, true, (value == null ? null : ((Map<?, Object>) value).values()), errors);
 		}
 		else
 		{

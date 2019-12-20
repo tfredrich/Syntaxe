@@ -18,7 +18,12 @@ package com.strategicgains.syntaxe;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -128,7 +133,37 @@ public class StringValidationTest
 		assertTrue(errors.get(0).contains("String Array"));
 		assertTrue(errors.get(1).contains("String Array"));
 	}
-	
+
+	@Test
+	public void shouldValidateNullableMapValues()
+	{
+		Map<String, String> map = new LinkedHashMap<>();
+		map.put("todd", "was here");
+		map.put("qr", "st");
+		map.put("foo", "barely");
+		object.setValidatedString("ab");
+		object.setNullableMap(map);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertEquals("nullableMap[0] is limited to 5 characters", errors.get(0));
+		assertEquals("nullableMap[2] is limited to 5 characters", errors.get(1));
+	}
+
+	@Test
+	public void shouldValidateNonNullableMapValues()
+	{
+		Map<String, String> map = new LinkedHashMap<>();
+		map.put("todd", "was here");
+		map.put("qr", "st");
+		map.put("foo", "barely");
+		object.setValidatedString("ab");
+		object.setNotNullMap(map);
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(2, errors.size());
+		assertEquals("notNullMap[0] is limited to 5 characters", errors.get(0));
+		assertEquals("notNullMap[2] is limited to 5 characters", errors.get(1));
+	}
+
 	@SuppressWarnings("unused")
 	private class Inner
 	{
@@ -141,6 +176,21 @@ public class StringValidationTest
 		private String ignoredString;
 		
 		private int ignoredInt;
+
+		@StringValidation(maxLength=5)
+		private Collection<String> nullableCollection = new HashSet<String>();
+
+		@StringValidation(maxLength=5)
+		public Map<String, String> nullableMap;
+
+		@StringValidation(maxLength=5, minLength=2, required=true)
+		public Map<String, String> notNullMap = new HashMap<>();
+
+		public Inner()
+		{
+			super();
+			notNullMap.put("zy", "xw");
+		}
 
 		public void setValidatedString(String validatedString)
         {
@@ -160,6 +210,21 @@ public class StringValidationTest
 		public void setUnnamedString(String value)
 		{
 			this.unnamedString = value;
+		}
+
+		public void setNullableCollection(Collection<String> nullableCollection)
+        {
+        	this.nullableCollection = nullableCollection;
+        }
+
+		public void setNullableMap(Map<String, String> nullableMap)
+		{
+			this.nullableMap = nullableMap;
+		}
+
+		public void setNotNullMap(Map<String, String> notNullMap)
+		{
+			this.notNullMap = notNullMap;
 		}
 	}
 
