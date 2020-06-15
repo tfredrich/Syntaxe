@@ -26,9 +26,9 @@ Supported annotations are:
 * @IntegerValidation - enforces min/max value.
 * @LongValidation - enforced min/max value.
 * @ObjectValidation - utilize your own Validator implementation for the annotated class.
-* @RegexValidation - enforces the string field to comply with a regular expression.
+* @RegexValidation - enforces the string field to comply with a regular expression (Deprected. Use StringValidation instead).
 * @Required - enforce presence of a nullable type.
-* @StringValidation - enforces 'required-ness', min/max length.
+* @StringValidation - enforces 'required-ness', min/max length, regex pattern validation.
 * @ValidationProvider - utilize your AnnotatedFieldValidator implementation for the annotated field/property.
 
 In addition, to help protect from cross-site scripting (XSS) attacks, annotations are available
@@ -253,6 +253,7 @@ Change History:
 * Added dot-notation-style field name prefixes for ChildValidation errors when validating an object graph.
 * Added CollectionValidation annotation to support enforcement of collection and map size limits.
 * Added support in all validation annotations to validate Map values (not keys) as well as collections and arrays.
+* Deprecated RegexValidation annotation in favor of adding the pattern functionality to the StringValidation annotation.
 
 1.0 - Released 10 Feb 2016
 --------------------------

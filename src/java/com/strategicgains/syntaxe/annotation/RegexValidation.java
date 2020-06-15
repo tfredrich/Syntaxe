@@ -23,9 +23,15 @@ import java.lang.annotation.Target;
 
 import com.strategicgains.syntaxe.validator.impl.RegexValidator;
 
+@Deprecated(forRemoval = true, since = "1.1")
 @Target(FIELD)
 @Retention(RUNTIME)
 @ValidationProvider(RegexValidator.class)
+/**
+ * 
+ * @author tfredrich
+ * @deprecated Use the pattern property on @StringValidation instead.
+ */
 public @interface RegexValidation
 {
 	String name() default "";

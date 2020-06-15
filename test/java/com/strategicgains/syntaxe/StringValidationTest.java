@@ -68,6 +68,17 @@ public class StringValidationTest
 	}
 
 	@Test
+	public void shouldNotCreateCustomMessage()
+	{
+		object.setValidatedString("todd");
+		object.setUnnamedString("fred");
+		object.setCustomMessage("kerbluey!");
+		List<String> errors = ValidationEngine.validate(object);
+		assertEquals(1, errors.size());
+		assertEquals("Custom Message is limited to 6 characters", errors.get(0));
+	}
+
+	@Test
 	public void shouldPassValidation()
 	{
 		object.setValidatedString("todd");
@@ -186,6 +197,10 @@ public class StringValidationTest
 		@StringValidation(maxLength=5, minLength=2, required=true)
 		public Map<String, String> notNullMap = new HashMap<>();
 
+		@StringValidation(name = "Custom Message", required = false, maxLength = 6, minLength = 1, message = "must be max of 6 and minimum of 1 characters")
+		public String customMessage = null;		
+
+
 		public Inner()
 		{
 			super();
@@ -226,13 +241,18 @@ public class StringValidationTest
 		{
 			this.notNullMap = notNullMap;
 		}
+
+		public void setCustomMessage(String value)
+		{
+			this.customMessage = value;
+		}
 	}
 
 	private class InnerToo
 	{
 		@StringValidation(name = "Required Array", required = true, maxLength = 6, minLength = 2)
 		public String[] requiredArray = null;
-		
+
 		@StringValidation(name = "String Array", required = false, maxLength = 6, minLength = 1)
 		public String[] stringArray = null;		
 	}

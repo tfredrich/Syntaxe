@@ -19,6 +19,8 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.strategicgains.syntaxe.annotation.StringValidation;
 import com.strategicgains.syntaxe.util.Validations;
@@ -31,6 +33,8 @@ import com.strategicgains.syntaxe.validator.AnnotatedFieldValidator;
 public class StringValidator
 extends AnnotatedFieldValidator<StringValidation>
 {
+	private Pattern regex;
+
 	/**
      * @param field
      * @param annotation
@@ -38,6 +42,7 @@ extends AnnotatedFieldValidator<StringValidation>
     public StringValidator(Field field, StringValidation annotation)
     {
 	    super(field, annotation);
+		regex = Pattern.compile(annotation.pattern());
     }
 
     @SuppressWarnings("unchecked")
@@ -95,6 +100,25 @@ extends AnnotatedFieldValidator<StringValidation>
 		if (getAnnotation().maxLength() > 0)
 		{
 			Validations.maxLength(name, stringValue, getAnnotation().maxLength(), errors);
+		}
+
+		if (stringValue != null && !regex.pattern().isBlank())
+		{
+			Matcher matcher = regex.matcher(stringValue);
+	
+			if (!matcher.matches())
+			{
+				String message = getAnnotation().message();
+
+				if (message != null && !message.trim().isEmpty())
+				{
+					errors.add(name + " " + message);
+				}
+				else
+				{
+					errors.add(name + " does not match the regular expression pattern: " + regex.pattern());
+				}
+			}
 		}
     }
 

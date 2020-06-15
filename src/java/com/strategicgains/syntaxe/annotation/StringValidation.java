@@ -34,8 +34,33 @@ import com.strategicgains.syntaxe.validator.impl.StringValidator;
 @ValidationProvider(StringValidator.class)
 public @interface StringValidation
 {
+	/**
+	 * The name of the property to use in error messages. Defaults to the property name.
+	 */
 	String name() default "";
+
+	/**
+	 * True if a value for the property is necessary.
+	 */
 	boolean required() default false;
+
+	/**
+	 * The minimum number of characters in the property. Must be greater-than or equal-to zero (0).
+	 */
 	int minLength() default -1;
+
+	/**
+	 * The maximum number of characters in the property. Must be greater-than or equal-to zero (0).
+	 */
 	int maxLength() default -1;
+
+	/**
+	 * A regular expression pattern to use in validating the property. Must be a valid Java Regex.
+	 */
+	String pattern() default "";
+
+	/**
+	 * A message to use (appended to the name() setting) only if the pattern() validation fails.
+	 */
+	String message() default "";
 }
