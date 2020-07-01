@@ -26,9 +26,10 @@ Supported annotations are:
 * @IntegerValidation - enforces min/max value.
 * @LongValidation - enforced min/max value.
 * @ObjectValidation - utilize your own Validator implementation for the annotated class.
-* @RegexValidation - enforces the string field to comply with a regular expression (Deprected. Use StringValidation instead).
+* @RegexValidation - enforces the string field to comply with a regular expression (Deprecated. Use StringValidation instead).
 * @Required - enforce presence of a nullable type.
 * @StringValidation - enforces 'required-ness', min/max length, regex pattern validation.
+* @DateValidation - enforces 'required-ness', future or past values on dates/timestamps (currently only works on Date instances).
 * @ValidationProvider - utilize your AnnotatedFieldValidator implementation for the annotated field/property.
 
 In addition, to help protect from cross-site scripting (XSS) attacks, annotations are available
@@ -126,7 +127,10 @@ public class MyValidatableClass
 	@FloatValidation(name="Float Value", min=0.0, max=6.5)
 	private float floatValue;
 
-	@RegexValidation(name="Email Address", pattern="(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})", message="must be a valid email address")
+	@DateValidation(name="Date Value", required=true, past = false, present = true, future = true)
+	private Date dateValue;
+
+	@StringValidation(name="Email Address", pattern="(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})", message="must be a valid email address")
 	private String email;
 }
 ...
@@ -254,6 +258,7 @@ Change History:
 * Added CollectionValidation annotation to support enforcement of collection and map size limits.
 * Added support in all validation annotations to validate Map values (not keys) as well as collections and arrays.
 * Deprecated RegexValidation annotation in favor of adding the pattern functionality to the StringValidation annotation.
+* Added DateValidation annotation for some semantic checking of past, present, future and requiredness on Date instances.
 
 1.0 - Released 10 Feb 2016
 --------------------------

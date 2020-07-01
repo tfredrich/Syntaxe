@@ -37,12 +37,17 @@ public class Validations
 		// Prevent instantiation.
 	}
 
-	public static void require(String name, String value, List<String> errors)
+	public static void require(String name, Object value, List<String> errors)
 	{
-    	if (value == null || value.trim().isEmpty())
+		// Strings are special--a required string can be neither null nor empty.
+		if (value != null && value.getClass().isAssignableFrom(String.class) && ((String) value).trim().isEmpty())
     	{
-    		errors.add(name + " is required");
+			errors.add(name + " is required");
     	}
+		else if (value == null)
+		{
+    		errors.add(name + " is required");
+		}
 	}
 	
 	public static void maxLength(String name, String value, int max, List<String> errors)
