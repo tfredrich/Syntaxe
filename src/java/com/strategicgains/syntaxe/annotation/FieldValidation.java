@@ -34,5 +34,5 @@ import com.strategicgains.syntaxe.validator.Validator;
 public @interface FieldValidation
 {
 	String name() default "";
-	Class<? extends Validator> value();
+	Class<? extends Validator<?>> value();
 }

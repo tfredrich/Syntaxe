@@ -3,6 +3,7 @@ package com.strategicgains.syntaxe;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -15,6 +16,16 @@ public class AbstractValidatableTest
 	public void shouldValidateExtenderViaEngine()
 	{
 		List<String> errors = ValidationEngine.validate(new Inner());
+		assertEquals(2, errors.size());
+		assertTrue(errors.contains("'other' field is required"));
+		assertTrue(errors.contains("String Value is required"));
+	}
+
+	@Test
+	public void shouldValidateExtenderViaEngineAltCall()
+	{
+		List<String> errors = new ArrayList<>();
+		ValidationEngine.validate(new Inner(), errors, null);
 		assertEquals(2, errors.size());
 		assertTrue(errors.contains("'other' field is required"));
 		assertTrue(errors.contains("String Value is required"));
@@ -37,6 +48,16 @@ public class AbstractValidatableTest
 	public void shouldValidateImplViaEngine()
 	{
 		List<String> errors = ValidationEngine.validate(new InnerImpl());
+		assertEquals(2, errors.size());
+		assertTrue(errors.contains("'other' field is required"));
+		assertTrue(errors.contains("String Value is required"));
+	}
+
+	@Test
+	public void shouldValidateImplViaEngineAltCall()
+	{
+		List<String> errors = new ArrayList<>();
+		ValidationEngine.validate(new InnerImpl(), errors, null);
 		assertEquals(2, errors.size());
 		assertTrue(errors.contains("'other' field is required"));
 		assertTrue(errors.contains("String Value is required"));

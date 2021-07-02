@@ -37,11 +37,11 @@ import com.strategicgains.syntaxe.validator.Validator;
  */
 public class ValidationEngine
 {
-	private static final ConcurrentHashMap<Class<?>, List<Field>> cachedFieldsByClass = new ConcurrentHashMap<Class<?>, List<Field>>();
-	private static final ConcurrentHashMap<Integer, List<Validator>> cachedValidatorsByHashcode = new ConcurrentHashMap<Integer, List<Validator>>();
-	private static final ConcurrentHashMap<Class<?>, Validator> cachedObjectValidatorsByClass = new ConcurrentHashMap<Class<?>, Validator>();
-	private static final ConcurrentHashMap<Integer, List<XssEncoder>> cachedEncodersByHashcode = new ConcurrentHashMap<Integer, List<XssEncoder>>();
-	private static final ThreadLocal<Set<Object>> visitedObjects = new ThreadLocal<Set<Object>>();
+	private static final ConcurrentHashMap<Class<?>, List<Field>> cachedFieldsByClass = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Integer, List<Validator<?>>> cachedValidatorsByHashcode = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Class<?>, Validator<?>> cachedObjectValidatorsByClass = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Integer, List<XssEncoder>> cachedEncodersByHashcode = new ConcurrentHashMap<>();
+	private static final ThreadLocal<Set<Object>> visitedObjects = new ThreadLocal<>();
 
 	private ValidationEngine()
 	{
@@ -49,19 +49,19 @@ public class ValidationEngine
 	}
 
 	/**
-	 * Validates the object, returning a list of error messages
-	 * if validation fails.  If the list is empty, no errors
-	 * occurred.
+	 * Validates the object, returning a list of error messages if validation
+	 * fails. If the list is empty, no errors occurred.
 	 * <p>
 	 * Also calls encode() to leverage any XSS encoding annotations.
-	 * </p><p>
-	 * Note: this method calls Validatable.validate() if the
-	 * instance being validated implements the Validatable interface.
-	 * However, if Validatable.validate() turns around and calls
-	 * the ValidationEngine (with the same object), you will get
-	 * inconsistent results--with more-than the expected number of
-	 * error messages.
 	 * </p>
+	 * <p>
+	 * Note: this method calls Validatable.validate() if the instance being
+	 * validated implements the Validatable interface. However, if
+	 * Validatable.validate() turns around and calls the ValidationEngine (with
+	 * the same object), you will get inconsistent results--with more-than the
+	 * expected number of error messages.
+	 * </p>
+	 * 
 	 * @param object
 	 * @return a List of error message strings. Never null.
 	 */
@@ -72,9 +72,14 @@ public class ValidationEngine
 
 	public static List<String> validate(Object object, String prefix)
 	{
-		List<String> errors = new ArrayList<String>();
+		List<String> errors = new ArrayList<>();
+		validate(object, errors, prefix);
+		return errors;
+	}
 
-		if (visit(object)) return errors;
+	public static void validate(Object object, List<String> errors, String prefix)
+	{
+		if (visit(object)) return;
 
 		encode(object);
 
@@ -82,14 +87,7 @@ public class ValidationEngine
 		{
 			if (isValidatable(object))
 			{
-				try
-				{
-					callValidate((Validatable) object);
-				}
-				catch (ValidationException ve)
-				{
-					errors.addAll(ve.getErrors());
-				}
+				callValidate((Validatable) object, errors);
 			}
 
 			validateFields(object, errors, prefix);
@@ -101,36 +99,37 @@ public class ValidationEngine
 		}
 		finally
 		{
-            if (isRootValidationObject(object))
-            {
-                // don't clear the visited set until the whole graph has been validated and it's back to the root
-                clearVisited();
-            }
+			if (isRootValidationObject(object))
+			{
+				// don't clear the visited set until the whole graph has been
+				// validated and it's back to the root
+				clearVisited();
+			}
 		}
-
-		return errors;
 	}
 
 	/**
-	 * Validates the object, throwing a ValidationException
-	 * if there were errors.
+	 * Validates the object, throwing a ValidationException if there were
+	 * errors.
 	 * <p>
 	 * Also calls encode() to leverage any XSS encoding annotations.
-	 * </p><p>
-	 * Note: that this method calls Validatable.validate() if the
-	 * instance being validated implements the Validatable interface.
-	 * However, if Validatable.validate() turns around and calls
-	 * the ValidationEngine (on the same object), you will get
-	 * inconsistent results--with more-than the expected number of
-	 * error messages.
 	 * </p>
+	 * <p>
+	 * Note: that this method calls Validatable.validate() if the instance being
+	 * validated implements the Validatable interface. However, if
+	 * Validatable.validate() turns around and calls the ValidationEngine (on
+	 * the same object), you will get inconsistent results--with more-than the
+	 * expected number of error messages.
+	 * </p>
+	 * 
 	 * @param object
-	 * @throws ValidationException containing the error messages if a validation error occurs.
+	 * @throws ValidationException
+	 *             containing the error messages if a validation error occurs.
 	 */
 	public static void validateAndThrow(Object object)
 	{
 		List<String> errors = validate(object);
-		
+
 		if (!errors.isEmpty())
 		{
 			throw new ValidationException(errors);
@@ -138,13 +137,14 @@ public class ValidationEngine
 	}
 
 	/**
-	 * Leverages the XSS-encoding annotations to encode the String fields of the object
-	 * to help prevent cross-site scripting attacks.
+	 * Leverages the XSS-encoding annotations to encode the String fields of the
+	 * object to help prevent cross-site scripting attacks.
 	 * <p>
-	 * Note that validate() calls encode(), so it is not necessary to call both. This
-	 * method is here in case you don't want to call validate() and only want to perform
-	 * XSS encoding.
+	 * Note that validate() calls encode(), so it is not necessary to call both.
+	 * This method is here in case you don't want to call validate() and only
+	 * want to perform XSS encoding.
 	 * </p>
+	 * 
 	 * @param object an object in which to encode the fields for XSS prevention.
 	 */
 	public static void encode(Object object)
@@ -155,14 +155,15 @@ public class ValidationEngine
 
 			for (Field field : fields)
 			{
-				List<XssEncoder> encoders = getEncoders(field, object);
+				List<XssEncoder> encoders = getEncoders(field);
 
 				if (!encoders.isEmpty())
 				{
 					for (XssEncoder encoder : encoders)
 					{
 						field.setAccessible(true);
-						String encoded = encoder.encode((String) field.get(object));
+						String encoded = encoder
+						    .encode((String) field.get(object));
 						field.set(object, encoded);
 					}
 				}
@@ -181,7 +182,7 @@ public class ValidationEngine
 
 		for (Field field : fields)
 		{
-			List<Validator> validators = getValidators(field, object);
+			List<Validator<?>> validators = getValidators(field);
 
 			if (!validators.isEmpty())
 			{
@@ -200,77 +201,89 @@ public class ValidationEngine
 		}
 	}
 
-	private static List<Validator> getValidators(Field field, Object object)
-	throws InstantiationException, IllegalAccessException, SecurityException,
-		NoSuchMethodException, IllegalArgumentException, InvocationTargetException
+	private static List<Validator<?>> getValidators(Field field)
+	throws InstantiationException,
+	    IllegalAccessException,
+	    SecurityException,
+	    NoSuchMethodException,
+	    IllegalArgumentException,
+	    InvocationTargetException
 	{
-		List<Validator> validators = cachedValidatorsByHashcode.get(field.hashCode());
-		
+		List<Validator<?>> validators = cachedValidatorsByHashcode.get(field.hashCode());
+
 		if (validators != null)
 		{
 			return validators;
 		}
-		
-		validators  = new ArrayList<Validator>();
+
+		validators = new ArrayList<>();
 
 		for (Annotation a : field.getAnnotations())
 		{
-            Validator<?> validator = null;
-            Class<? extends Validator> validatorClass = null;
+			Validator<?> validator = null;
+			Class<? extends Validator<?>> validatorClass = null;
 
-            // find a validator implementation. it can either be in a ValidationProvider annotation on the field's annotation,
-            // or it can be in the value parameter of the field's FieldValidation annotation
+			// find a validator implementation. it can either be in a
+			// ValidationProvider annotation on the field's annotation,
+			// or it can be in the value parameter of the field's
+			// FieldValidation annotation
 			if (a.annotationType().isAnnotationPresent(ValidationProvider.class))
 			{
 				ValidationProvider providerAnnotation = a.annotationType().getAnnotation(ValidationProvider.class);
-                validatorClass = providerAnnotation.value();
+				validatorClass = providerAnnotation.value();
 			}
 			else if (a.annotationType().isAssignableFrom(FieldValidation.class))
-            {
-                validatorClass = ((FieldValidation) a).value();
-            }
+			{
+				validatorClass = ((FieldValidation) a).value();
+			}
 
-            if (validatorClass != null)
-            {
-                // if the validator extends AnnotatedFieldValidator use the (Field, Annotation) constructor, otherwise use the default constructor
-                if (AnnotatedFieldValidator.class.isAssignableFrom(validatorClass))
-                {
-                    Constructor<? extends Validator> constructor = validatorClass.getConstructor(Field.class, a.annotationType());
+			if (validatorClass != null)
+			{
+				// if the validator extends AnnotatedFieldValidator use the
+				// (Field, Annotation) constructor, otherwise use the default
+				// constructor
+				if (AnnotatedFieldValidator.class.isAssignableFrom(validatorClass))
+				{
+					Constructor<? extends Validator<?>> constructor = validatorClass.getConstructor(Field.class, a.annotationType());
 
-                    if (constructor != null)
-                    {
-                        validator = constructor.newInstance(field, a);
-                    }
-                }
-                else
-                {
-                    validator = validatorClass.newInstance();
-                }
+					if (constructor != null)
+					{
+						validator = constructor.newInstance(field, a);
+					}
+				}
+				else
+				{
+					validator = validatorClass.getDeclaredConstructor().newInstance();
+				}
 
-                // if a validator was found and instantiated, add it to the list
-                if (validator != null)
-                {
-                    validators.add(validator);
-                }
-            }
+				// if a validator was found and instantiated, add it to the list
+				if (validator != null)
+				{
+					validators.add(validator);
+				}
+			}
 		}
 
 		cachedValidatorsByHashcode.put(field.hashCode(), validators);
 		return validators;
 	}
 
-	private static List<XssEncoder> getEncoders(Field field, Object object)
-	throws InstantiationException, IllegalAccessException, SecurityException,
-		NoSuchMethodException, IllegalArgumentException, InvocationTargetException
+	private static List<XssEncoder> getEncoders(Field field)
+	throws InstantiationException,
+	    IllegalAccessException,
+	    SecurityException,
+	    NoSuchMethodException,
+	    IllegalArgumentException,
+	    InvocationTargetException
 	{
 		List<XssEncoder> encoders = cachedEncodersByHashcode.get(field.hashCode());
-		
+
 		if (encoders != null)
 		{
 			return encoders;
 		}
-		
-		encoders  = new ArrayList<XssEncoder>();
+
+		encoders = new ArrayList<>();
 
 		for (Annotation a : field.getAnnotations())
 		{
@@ -291,35 +304,28 @@ public class ValidationEngine
 		cachedEncodersByHashcode.put(field.hashCode(), encoders);
 		return encoders;
 	}
-	
+
 	private static Collection<Field> getAllDeclaredFields(Class<?> aClass)
 	{
-		List<Field> fields = cachedFieldsByClass.get(aClass);
-		
-		if (fields == null)
-		{
-			fields = ClassUtils.getAllDeclaredFields(aClass);
-			cachedFieldsByClass.put(aClass, fields);
-		}
-		
-		return fields;
+		return cachedFieldsByClass.computeIfAbsent(aClass, k -> ClassUtils.getAllDeclaredFields(aClass));
 	}
 
 	private static void validateObject(Object object, List<String> errors, String prefix)
-	throws InstantiationException, IllegalAccessException
+	throws InstantiationException,
+	    IllegalAccessException
 	{
 		ObjectValidation annotation = object.getClass().getAnnotation(ObjectValidation.class);
-		
+
 		if (annotation == null) return;
-		
+
 		Validator validator = cachedObjectValidatorsByClass.get(object.getClass());
-		
+
 		if (validator == null)
 		{
 			validator = annotation.value().newInstance();
 			cachedObjectValidatorsByClass.put(object.getClass(), validator);
 		}
-		
+
 		validator.perform(object, errors, prefix);
 	}
 
@@ -327,26 +333,34 @@ public class ValidationEngine
 	{
 		return (Validatable.class.isAssignableFrom(object.getClass()));
 	}
-	
-	private static void callValidate(Validatable object)
+
+	private static void callValidate(Validatable object, List<String> errors)
 	{
-		object.validate();
+		try
+		{
+			object.validate();
+		}
+		catch (ValidationException ve)
+		{
+			errors.addAll(ve.getErrors());
+		}
 	}
 
 	/**
 	 * Returns true if the object has been visited by the validation engine.
 	 * Otherwise, marks the object as visited and returns false.
 	 * 
-	 * @param object an object to visit
+	 * @param object
+	 *            an object to visit
 	 * @return true if the object has already been visited. Otherwise, false.
 	 */
 	private static boolean visit(Object object)
 	{
 		Set<Object> s = visitedObjects.get();
 
-		if (s != null)
+		if (s != null && s.contains(object))
 		{
-			if (s.contains(object)) return true;
+			return true;
 		}
 
 		markVisited(object);
@@ -356,10 +370,11 @@ public class ValidationEngine
 	private static void markVisited(Object object)
 	{
 		Set<Object> s = visitedObjects.get();
-		
+
 		if (s == null)
 		{
-			s = new LinkedHashSet<Object>(); // use an ordered set to know the first object is the root
+			// use an ordered set to know the first object is the root
+			s = new LinkedHashSet<>();
 			visitedObjects.set(s);
 		}
 
@@ -377,18 +392,15 @@ public class ValidationEngine
 		}
 	}
 
-    private static boolean isRootValidationObject(Object object)
-    {
-        Set<Object> s = visitedObjects.get();
+	private static boolean isRootValidationObject(Object object)
+	{
+		Set<Object> s = visitedObjects.get();
 
-        if (s != null)
-        {
-            if (s.iterator().hasNext())
-            {
-                return (s.iterator().next() == object);
-            }
-        }
+		if (s != null && s.iterator().hasNext())
+		{
+			return (s.iterator().next() == object);
+		}
 
-        return false;
-    }
+		return false;
+	}
 }
