@@ -16,6 +16,8 @@
 package com.strategicgains.syntaxe.util;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author toddf
@@ -40,14 +42,10 @@ public class Validations
 	public static void require(String name, Object value, List<String> errors)
 	{
 		// Strings are special--a required string can be neither null nor empty.
-		if (value != null && value.getClass().isAssignableFrom(String.class) && ((String) value).trim().isEmpty())
+		if (value == null || (value.getClass().isAssignableFrom(String.class) && ((String) value).trim().isEmpty()))
     	{
 			errors.add(name + " is required");
     	}
-		else if (value == null)
-		{
-    		errors.add(name + " is required");
-		}
 	}
 	
 	public static void maxLength(String name, String value, int max, List<String> errors)
@@ -131,6 +129,23 @@ public class Validations
 		if (actual < min)
 		{
 			errors.add(String.format(GREATER_THAN_OR_EQUAL_DOUBLE_ERROR, name, min));
+		}
+	}
+
+	public static void regex(String name, String value, Pattern regex, String message, List<String> errors)
+	{
+		Matcher matcher = regex.matcher(value);
+		
+		if (!matcher.matches())
+		{
+			if (message != null && !message.trim().isEmpty())
+			{
+				errors.add(name + " " + message);
+			}
+			else
+			{
+				errors.add(name + " does not match the regular expression pattern: " + regex.pattern());
+			}
 		}
 	}
 }

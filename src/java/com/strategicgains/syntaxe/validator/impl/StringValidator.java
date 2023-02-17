@@ -19,7 +19,6 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.strategicgains.syntaxe.annotation.StringValidation;
@@ -52,13 +51,10 @@ extends AnnotatedFieldValidator<StringValidation>
 		String name = determineName(prefix);
 		Object value = getValue(instance);
 
-		if (getAnnotation().required())
+		if (value == null && getAnnotation().required())
 		{
-	    	if (value == null)
-	    	{
-	    		errors.add(name + " is required");
-	    		return;
-	    	}
+    		errors.add(name + " is required");
+    		return;
 		}
 
 		if(isCollection())
@@ -104,21 +100,7 @@ extends AnnotatedFieldValidator<StringValidation>
 
 		if (stringValue != null && !regex.pattern().isBlank())
 		{
-			Matcher matcher = regex.matcher(stringValue);
-	
-			if (!matcher.matches())
-			{
-				String message = getAnnotation().message();
-
-				if (message != null && !message.trim().isEmpty())
-				{
-					errors.add(name + " " + message);
-				}
-				else
-				{
-					errors.add(name + " does not match the regular expression pattern: " + regex.pattern());
-				}
-			}
+			Validations.regex(name, stringValue, regex, getAnnotation().message(), errors);
 		}
     }
 
